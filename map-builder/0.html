@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Tutorial</title>
+        <link rel="stylesheet" href="style/fonts/stylesheet.css">
+        <link rel="stylesheet" href="style/css/prism.css">
+        <style media="screen">
+            pre.code {
+                -moz-border-radius: 10px;
+                -webkit-border-radius: 10px;
+                border-radius: 10px;
+                padding: 10px;
+                height: 280px;
+                overflow: auto;
+                background: #181818;
+                border: solid 2px #181818;
+            }
+            #codelines {
+                display: none;
+            }
+            #svg {
+                -moz-border-radius: 10px;
+                -webkit-border-radius: 10px;
+                border-radius: 10px;
+                border: solid 2px #ccc;
+                width: 900px;
+                height: 636px;
+                float: left;
+                margin-right: 10px;
+                font: 1em source-sans-pro, Source Sans Pro, Helvetica, sans-serif;
+            }
+        </style>
+        <script src="dist/snap.svg-min.js"></script>
+        <script src="style/js/prism.js"></script>
+        <script>
+        var CS;
+        window.onload = function () {
+
+            var nodes = [{"cx":380,"cy":169,"id":"city01","name":"london","tx":"361","ty":"151"},{"cx":266,"cy":205,"id":"city02","name":"new_york","tx":"250","ty":"191"},{"cx":369,"cy":230,"id":"city03","name":"madrid","tx":"320","ty":"238"},{"cx":426,"cy":199,"id":"city04","name":"paris","tx":"387","ty":"200"},{"cx":443,"cy":155,"id":"city05","name":"essen","tx":"425","ty":"142"},{"cx":467,"cy":185,"id":"city06","name":"milan","tx":"476","ty":"179"},{"cx":440,"cy":262,"id":"city07","name":"algiers","tx":"392","ty":"264"},{"cx":496,"cy":222,"id":"city08","name":"istanbul","tx":"441","ty":"225"},{"cx":487,"cy":274,"id":"city09","name":"cairo","tx":"457","ty":"292"},{"cx":510,"cy":144,"id":"city10","name":"st-petersburg","tx":"463","ty":"130"},{"cx":545,"cy":186,"id":"city11","name":"moscow","tx":"546","ty":"172"},{"cx":540,"cy":255,"id":"city12","name":"baghdad","tx":null,"ty":null},{"cx":585,"cy":216,"id":"city13","name":"tehran","tx":"593","ty":"204"},{"cx":547,"cy":309,"id":"city14","name":"ryadh","tx":"532","ty":"330"},{"cx":598,"cy":273,"id":"city15","name":"karachi","tx":null,"ty":null},{"cx":644,"cy":256,"id":"city16","name":"delhi","tx":"632","ty":"242"},{"cx":605,"cy":319,"id":"city17","name":"mumbai","tx":"582","ty":"341"},{"cx":688,"cy":272,"id":"city18","name":"kolkata","tx":null,"ty":null},{"cx":655,"cy":353,"id":"city19","name":"chennai","tx":"614","ty":"374"},{"cx":696,"cy":324,"id":"city20","name":"bangkok","tx":null,"ty":null},{"cx":731,"cy":296,"id":"city21","name":"hong-kong","tx":null,"ty":null},{"cx":780,"cy":287,"id":"city22","name":"taipei","tx":"789","ty":"304"},{"cx":726,"cy":243,"id":"city23","name":"shangai","tx":"676","ty":"237"},{"cx":722,"cy":200,"id":"city24","name":"beijing","tx":"675","ty":"200"},{"cx":778,"cy":199,"id":"city25","name":"seoul","tx":"788","ty":"188"},{"cx":821,"cy":223,"id":"city26","name":"tokyo","tx":"833","ty":"216"},{"cx":825,"cy":270,"id":"city27","name":"ozaka","tx":"830","ty":"288"},{"cx":734,"cy":369,"id":"city28","name":"ho-chi-minh-city","tx":"723","ty":"391"},{"cx":793,"cy":363,"id":"city29","name":"manila","tx":"800","ty":"381"},{"cx":696,"cy":408,"id":"city30","name":"jakarta","tx":"676","ty":"430"},{"cx":832,"cy":492,"id":"city31","name":"sydney","tx":null,"ty":null},{"cx":499,"cy":335,"id":"city32","name":"karthoum","tx":"507","ty":"352"},{"cx":420,"cy":347,"id":"city33","name":"lagos","tx":null,"ty":null},{"cx":459,"cy":390,"id":"city34","name":"kinshasa","tx":"406","ty":"407"},{"cx":494,"cy":454,"id":"city35","name":"johannesburg","tx":"455","ty":"480"},{"cx":300,"cy":434,"id":"city36","name":"sao-paulo","tx":"306","ty":"454"},{"cx":264,"cy":481,"id":"city37","name":"buenos-aires","tx":"266","ty":"502"},{"cx":212,"cy":359,"id":"city38","name":"bogota","tx":"226","ty":"360"},{"cx":189,"cy":425,"id":"city39","name":"lima","tx":"163","ty":"444"},{"cx":198,"cy":493,"id":"city40","name":"santiago","tx":"157","ty":"514"},{"cx":216,"cy":295,"id":"city41","name":"miami","tx":"233","ty":"304"},{"cx":243,"cy":242,"id":"city42","name":"washington","tx":"256","ty":"244"},{"cx":177,"cy":245,"id":"city43","name":"atlanta","tx":"156","ty":"264"},{"cx":146,"cy":304,"id":"city44","name":"mexico-city","tx":"118","ty":"325"},{"cx":88,"cy":285,"id":"city45","name":"los-angeles","tx":"67","ty":"306"},{"cx":217,"cy":197,"id":"city46","name":"montreal","tx":"192","ty":"184"},{"cx":154,"cy":201,"id":"city47","name":"chicago","tx":"136","ty":"187"},{"cx":74,"cy":223,"id":"city48","name":"san-francisco","tx":"48","ty":"207"}];
+
+            var s = Snap("#svg");
+            
+            var image = s.image("image003.jpg", 0, 0, 1200, 849),
+                city_attrs = {
+                            fill: "#FFF",
+                            stroke: "#ee0505",
+                            strokeWidth: 5
+                        };
+
+            var background = s.g().attr({id:"g-background"}),
+                links = s.g().attr({id:"g-links"}),
+                cities = s.g().attr({id:"g-cities"}),
+                names = s.g().attr({id:"g-names"});
+
+            CS = cities;
+            background.attr({
+                transform: "s.75,.75,0,0"
+            });
+            background.add(image);
+
+
+            var cityName_attrs = {
+                            "fill": "#fff",
+                            "font-size": "12px"
+                        };
+
+
+            var dumpCities = function() {
+                    var acc = [];
+                    cities.selectAll("circle").forEach(c => {
+                        var v = {
+                            cx: parseInt(c.attr("cx")) + parseInt(c.attr("transform").globalMatrix.e),
+                            cy: parseInt(c.attr("cy")) + parseInt(c.attr("transform").globalMatrix.f),
+                            id: c.attr("id"),
+                            name: c.attr("name"),
+                            tx: c.attr("tx"),
+                            ty: c.attr("ty")
+                        };
+                        acc.push(v);
+                    });
+                    console.log(JSON.stringify(acc));
+                },
+                adjustCircleCoordinates = function(city) {
+                    // adjust position to reflect transform operation directly
+                    city.attr({cx: (parseInt(city.attr("cx")) + parseInt(city.attr("transform").globalMatrix.e)),
+                               cy: (parseInt(city.attr("cy")) + parseInt(city.attr("transform").globalMatrix.f)),
+                               transform: ""});
+
+                },
+                adjustTextCoordinates = function(city) {
+                    // adjust position to reflect transform operation directly
+                    city.attr({x: (parseInt(city.attr("x")) + parseInt(city.attr("transform").globalMatrix.e)),
+                               y: (parseInt(city.attr("y")) + parseInt(city.attr("transform").globalMatrix.f)),
+                               transform: ""});
+
+                };
+
+            var idGen = nodes.length + 1;
+            nodes.forEach(node => {
+                var newCity = s.circle(node.cx, node.cy, 10)
+                               .attr(city_attrs)
+                               .attr({id: node.id,
+                                      name: node.name})
+                               .drag(),
+                    tx = node.tx || (node.cx - 20),
+                    ty = node.ty || (node.cy - 15),
+                    name    = s.text(tx, ty, [node.name])
+                               .attr(cityName_attrs)
+                               .attr({id: node.id + "-text",
+                                      name: node.name})
+                               .drag();
+                cities.add(newCity); 
+                names.add(name);
+                newCity.node.onmouseup = function() {
+                    adjustCircleCoordinates(newCity);
+                    dumpCities();
+                };
+                name.node.onmouseup = function() {
+                    adjustTextCoordinates(name);
+                    newCity.attr({tx: name.attr("x"), 
+                                  ty: name.attr("y")});
+                    dumpCities();
+                };
+            });
+
+            image.node.ondblclick = function(e) {
+                console.log("double clicked", e);
+                var newId = "city" + (idGen++),
+                    newCity = s.circle(350, 150, 10)
+                               .attr(city_attrs)
+                               .attr({id: newId})
+                               .drag();
+                cities.add(newCity); 
+                newCity.node.onmouseup = function() {
+                    adjustCircleCoordinates(newCity);
+                    dumpCities();
+                };
+            };
+
+            // --------------------------------------------
+            // ANIMATION FX
+            // --------------------------------------------
+
+
+            var pulse = function(s, attrsIn, attrsOut) {
+                s.animate(attrsIn, 2e3, mina.bounce, function(c) {
+                    pulse(s, attrsOut, attrsIn);
+                });
+            };
+
+            //pulse(city1, {strokeWidth:2}, {strokeWidth:5});
+            var animateLine = function(l) {
+                Snap.animate(150 + 20, 350 - 20, function(val) {
+                    l.attr({x1 : val,
+                            x2 : val + 20});
+                }, 1e3, mina.linear, function(done) {
+                    l.attr({x1 : 150});
+                    animateLine(l);
+                });
+            };
+            //animateLine(line);
+        };
+        </script>
+    </head>
+    <body>
+        <svg id="svg"></svg>
+    </body>
+</html>
