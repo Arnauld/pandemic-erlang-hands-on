@@ -13,10 +13,12 @@ Add [cowboy](https://github.com/ninenines/cowboy) dependency in `rebar.config`
 ```
 {erl_opts, [debug_info]}.
 {deps, [
-        {cowboy, {git, "https://github.com/ninenines/cowboy", {tag, "1.0.4"}}}
-]}.
+        {cowboy, {git, "git://github.com/ninenines/cowboy.git"}}
+       ]}.
 {plugins, [rebar3_run]}.
 ```
+
+*Warning*: one uses the `master` branch for cowboy, mainly due to API changes that are in the documentation but not in a release version yet.
 
 Grab the dependency before being offline
 

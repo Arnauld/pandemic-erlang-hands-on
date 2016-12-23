@@ -9,6 +9,11 @@ Build
     $ rebar3 compile
 
 
+Start the application:
+
+    $ erl -pa _build/default/lib/*/ebin -s pandemerl
+
+
 Libraries
 ---------
 
