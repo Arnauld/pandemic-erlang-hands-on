@@ -1,4 +1,4 @@
--module(pand_web_handler).
+-module(pe_web_handler).
 
 -export([init/2]).
 
