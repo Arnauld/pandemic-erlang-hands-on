@@ -23,7 +23,9 @@
   "author": "",
   "license": "",
   "dependencies": {
+    "eve": "^0.4.2",
     "react": "^15.4.1",
-    "react-dom": "^15.4.1"
+    "react-dom": "^15.4.1",
+    "snapsvg-cjs": "0.0.4"
   }
 }
