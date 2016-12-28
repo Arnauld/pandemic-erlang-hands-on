@@ -10,21 +10,31 @@ import MyUnderwood from "../styles/fonts/myunderwood/stylesheet.css";
 //noinspection ES6UnusedImports
 import Main from "../styles/css/main.css";
 //---------------------------------------------------------
-// STYLE, FONTS and CSS
+// BEHAVIOR
 //---------------------------------------------------------
 import React from "react";
 import ReactDOM from "react-dom";
 import AppBar from "./appbar.jsx";
 import WorldMap from "./worldmap.jsx";
+import Terminal from "./terminal.jsx";
 import Cities from "./core/cities.js";
+import Bash from "./bash/bash.js";
 
 const cities = new Cities();
+const bash = new Bash();
 
 const Root = () => (
     <div>
         <AppBar/>
         <div className="container">
-            <WorldMap cities={cities}/>
+            <div className="row">
+                <div className="col-lg-8">
+                    <WorldMap cities={cities}/>
+                </div>
+                <div className="col-lg-4">
+                    <Terminal bash={bash}/>
+                </div>
+            </div>
         </div>
     </div>
 );

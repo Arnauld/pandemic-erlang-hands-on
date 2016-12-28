@@ -11,13 +11,15 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+.container {
+    width: 100%;
+}
 
 .colorscheme {
     color: #FDC763;
     color: #FAA063;
     color: #E89F5A;
     color: #8D584C;
-
 }
 
 .pandemic.navbar-brand,
@@ -30,4 +32,34 @@ body {
 .cli,
 .cli.form-control {
     width: 400px;
+}
+
+/**************************************
+ TERMINAL
+ **************************************/
+
+.terminal {
+    color: #E89F5A;
+    height: 636px;
+    overflow: scroll;
+}
+.terminal input:focus {
+    outline: none;
+}
+
+.terminal .prefix {
+    margin-right: 5px
+}
+
+.terminal form {
+    display: flex;
+}
+
+.terminal input {
+    background: none;
+    border: none;
+    flex-grow: 1;
+    font-size: inherit;
+    outline: none !important;
+    padding: 0;
 }

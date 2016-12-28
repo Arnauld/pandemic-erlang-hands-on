@@ -22,6 +22,10 @@ Install the application dependencies
 * Hot reloading via webpack dev server:
     * `npm start`
     * Go to `http://localhost:8080/`, page reloads automatically when there are changes
+    
+# Notes
+
+    cmd + maj + f
 
 # Resources
 

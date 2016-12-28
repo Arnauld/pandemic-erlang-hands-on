@@ -95,14 +95,17 @@ class WorldMap extends Component {
 
     render() {
         return (
-            <svg ref="svg" width={this.props.width} height={this.props.height}>
+            <svg ref="svg"
+                 width={this.props.width}
+                 height={this.props.height}
+                 viewBox={"0 0 900 636"}>
             </svg>
         );
     }
 }
 
 WorldMap.propTypes = {
-    cities: React.PropTypes.objectOf(Cities).isRequired
+    cities: React.PropTypes.instanceOf(Cities).isRequired
 };
 
 WorldMap.defaultProps = {
