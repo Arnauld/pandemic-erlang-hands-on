@@ -27,3 +27,4 @@ Install the application dependencies
 
 * [webpack-babel-demo](https://github.com/rauschma/webpack-babel-demo)
 * [Pro React - Appendix A - Webpack for react](http://www.pro-react.com/materials/appendixA/)
+* [Bootstrap - Block Theme](https://www.bootstrapzero.com/bootstrap-template/blocks)

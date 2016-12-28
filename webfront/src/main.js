@@ -1,6 +1,30 @@
-import React from 'react';
-import {render} from 'react-dom';
-import Greeter from './world.jsx';
+//---------------------------------------------------------
+// STYLE, FONTS and CSS
+//---------------------------------------------------------
+//noinspection ES6UnusedImports
+import Bootstrap from "bootstrap/dist/css/bootstrap.css";
+//noinspection ES6UnusedImports
+import SourceCodePro from "../styles/fonts/sourcecodepro/stylesheet.css";
+//noinspection ES6UnusedImports
+import Main from "../styles/css/main.css";
+//---------------------------------------------------------
+// STYLE, FONTS and CSS
+//---------------------------------------------------------
+import React from "react";
+import ReactDOM from "react-dom";
+import AppBar from "./appbar.jsx";
+import WorldMap from "./worldmap.jsx";
+import Cities from "./core/cities.js";
 
-render(<Greeter />, document.getElementById('root'));
-      
+const cities = new Cities();
+
+const Root = () => (
+    <div>
+        <AppBar/>
+        <div className="container">
+            <WorldMap cities={cities}/>
+        </div>
+    </div>
+);
+
+ReactDOM.render(<Root />, document.getElementById('root'));
