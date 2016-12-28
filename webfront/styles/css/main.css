@@ -5,7 +5,29 @@ html,body{
     background: #030303;
 }
 body {
-    font-family: source-sans-pro, sans-serif;
+    /*font-family: source-sans-pro, sans-serif;*/
+    font-family: my_underwoodregular, serif;
     position: relative;
     -webkit-font-smoothing: antialiased;
+}
+
+
+.colorscheme {
+    color: #FDC763;
+    color: #FAA063;
+    color: #E89F5A;
+    color: #8D584C;
+
+}
+
+.pandemic.navbar-brand,
+.pandemic {
+    font-family: my_underwoodregular, serif;
+    font-size: 40px;
+    color: #E89F5A;
+}
+
+.cli,
+.cli.form-control {
+    width: 400px;
 }

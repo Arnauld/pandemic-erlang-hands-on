@@ -7,8 +7,8 @@ import BackgroundSvg from "../styles/images/worldmap.svg";
 const Styles = {
     city: {
         active: {
-            fill: "#9E5223",
-            stroke: "#E67733",
+            fill: "#8D584C",
+            stroke: "#E89F5A",
             strokeWidth: 5
         },
         disabled: {
@@ -19,11 +19,11 @@ const Styles = {
     },
     text: {
         active : {
-            "fill": "#9E5223",
+            "fill": "#E89F5A",
             "font-size": "12px"
         },
         disabled: {
-            "fill": "#8f8f8f",
+            "fill": "#6b6b6b",
             "font-size": "12px"
         }
     }
