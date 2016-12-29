@@ -1,7 +1,8 @@
 class Command {
 
-    constructor(command) {
+    constructor(command, description) {
         this.command = command;
+        this.description = description;
     }
 
     autocomplete(input, command, args, outs) {

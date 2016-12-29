@@ -1,11 +1,11 @@
-import Command from "./command";
+import Command from "./Command";
 import Fun from "../util/fun";
 import data from "../core/cities.json";
 
 class InfectCommand extends Command {
 
     constructor() {
-        super("infect");
+        super("infect", "infect the cities specified");
     }
 
     autocomplete(input, command, args, outs) {

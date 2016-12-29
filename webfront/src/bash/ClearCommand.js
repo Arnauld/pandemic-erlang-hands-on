@@ -1,9 +1,9 @@
-import Command from "./command";
+import Command from "./Command";
 
 class ClearCommand extends Command {
 
     constructor() {
-        super("clear");
+        super("clear", "clear the terminal");
     }
 
 

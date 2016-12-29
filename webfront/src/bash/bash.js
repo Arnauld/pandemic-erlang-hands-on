@@ -1,5 +1,6 @@
 import InfectCommand from "./InfectCommand";
 import ClearCommand from "./ClearCommand";
+import HelpCommand from "./HelpCommand";
 import Out from "./Out";
 
 class Bash {
@@ -8,10 +9,14 @@ class Bash {
         this.prevCommands = [];
         this.prevCommandsIndex = 0;
         this.outs = new Out();
+
+        const helpCommand = new HelpCommand();
         this.commands = [
             new InfectCommand(),
-            new ClearCommand()
+            new ClearCommand(),
+            helpCommand
         ];
+        helpCommand.commands(this.commands);
     }
 
     get history() {
@@ -56,7 +61,7 @@ class Bash {
         }
         else {
             this.outs.writeCommand(input);
-            this.outs.writeError("Unknown command!");
+            this.outs.writeError("Unknown command! - try 'help'");
         }
 
 
