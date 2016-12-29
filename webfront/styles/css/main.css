@@ -63,3 +63,10 @@ body {
     outline: none !important;
     padding: 0;
 }
+
+.terminal .error {
+    color: #9f1b33;
+}
+.terminal .message {
+    color: #6b6b6b;
+}

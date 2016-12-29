@@ -31,6 +31,11 @@ class Terminal extends Component {
     attemptAutocomplete() {
         const input = this.refs.input.value;
         const suggestion = this.props.bash.autocomplete(input);
+
+        const comod = this.props.bash.checksum;
+        console.log("comod", comod);
+        this.setState({comod: comod});
+
         if (suggestion) {
             this.refs.input.value = suggestion;
         }
@@ -101,10 +106,17 @@ class Terminal extends Component {
         this.refs.input.value = '';
     }
 
-    renderHistoryItem() {
+
+    prefix() {
+        return (<span className="prefix">{`$`}</span>);
+    }
+
+    renderHistoryItem(prefix) {
         return (item, key) => {
-            //TODO if(item.isCommand())
-            return (<div key={key}><span>{item}</span></div>);
+            if (item.type === "command") {
+                return (<div key={key}>{prefix}<span className={item.type}>{item.text}</span></div>);
+            }
+            return (<div key={key}><span className={item.type}>{item.text}</span></div>);
         }
     }
 
@@ -112,9 +124,9 @@ class Terminal extends Component {
         const history = this.props.bash.history;
         return (
             <div className="terminal" onClick={() => this.refs.input.focus()}>
-                {history.map(this.renderHistoryItem())}
+                {history.map(this.renderHistoryItem(this.prefix()))}
                 <form onSubmit={evt => this.handleSubmit(evt)}>
-                    <span className="prefix">{`$`}</span>
+                    {this.prefix()}
                     <input
                         autoComplete="off"
                         onKeyDown={this.handleKeyDown}
