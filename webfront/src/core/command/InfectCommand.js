@@ -1,6 +1,6 @@
-import Command from "./Command";
-import Fun from "../util/fun";
-import data from "../core/cities.json";
+import Command from "../../bash/Command";
+import Fun from "../../util/fun";
+import data from "../cities.json";
 
 class InfectCommand extends Command {
 
@@ -9,10 +9,11 @@ class InfectCommand extends Command {
     }
 
     autocomplete(input, command, args, outs) {
+        const allCities = data.nodes;
         if (args.length > 0) {
             const last = Fun.last(args);
             const others = Fun.removeLast(args);
-            const cities = data.nodes.filter(n => {
+            const cities = allCities.filter(n => {
                 return n.name.startsWith(last)
             });
 
@@ -21,10 +22,12 @@ class InfectCommand extends Command {
             }
             if (cities.length > 1) {
                 outs.writeCommand(input);
-                cities.forEach(n => {
-                    outs.writeMessage(n.name);
-                });
+                outs.writeMessage(cities.map(n => n.name));
             }
+        }
+        else {
+            outs.writeCommand(input);
+            outs.writeMessage(allCities.map(n => n.name));
         }
         return super.autocomplete(input, command, args);
     }

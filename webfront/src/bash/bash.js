@@ -1,21 +1,17 @@
-import InfectCommand from "./InfectCommand";
-import ClearCommand from "./ClearCommand";
-import HelpCommand from "./HelpCommand";
+import HelpCommand from "./command/HelpCommand";
 import Out from "./Out";
 
 class Bash {
 
-    constructor() {
+    constructor(commands, history) {
         this.prevCommands = [];
         this.prevCommandsIndex = 0;
         this.outs = new Out();
+        history.forEach(n => this.outs.writeMessage(n));
 
         const helpCommand = new HelpCommand();
-        this.commands = [
-            new InfectCommand(),
-            new ClearCommand(),
-            helpCommand
-        ];
+        this.commands = commands.slice();
+        this.commands.push(helpCommand);
         helpCommand.commands(this.commands);
     }
 
@@ -34,9 +30,14 @@ class Bash {
         const potentials = this.commands.filter(c => c.command.startsWith(command));
         if (potentials.length === 1) {
             // any argument?
-            if (tokens.length === 0)
+            if (tokens.length === 0 && command !== potentials[0].command)
                 return potentials[0].command + " ";
             return potentials[0].autocomplete(input, command, tokens, this.outs);
+        }
+        if (potentials.length > 1) {
+            this.outs.writeCommand(input);
+            potentials.forEach(n => this.outs.writeMessage(n.command));
+            return input;
         }
         return null;
     }
@@ -65,6 +66,15 @@ class Bash {
         }
 
 
+        const newState = {
+            history: this.outs
+        };
+        return newState;
+    }
+
+    ctrlC() {
+        console.log("Ctrl+C");
+        this.outs.writeError("^C");
         const newState = {
             history: this.outs
         };

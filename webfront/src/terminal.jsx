@@ -21,7 +21,7 @@ class Terminal extends Component {
      * Keep input in view on change
      */
     componentDidUpdate() {
-        //this.refs.input.scrollIntoView();
+        this.refs.input.scrollIntoView();
     }
 
     /*
@@ -76,6 +76,7 @@ class Terminal extends Component {
             }
         } else if (evt.which === C_CHAR_CODE) {
             if (this.ctrlPressed) {
+                this.setState(bash.ctrlC());
                 this.refs.input.value = '';
             }
         } else if (evt.which === UP_CHAR_CODE) {
@@ -115,7 +116,17 @@ class Terminal extends Component {
             if (item.type === "command") {
                 return (<div key={key}>{prefix}<span className={item.type}>{item.text}</span></div>);
             }
-            return (<div key={key}><span className={item.type}>{item.text}</span></div>);
+            if (Array.isArray(item.text)) {
+                let count = 0;
+                return (
+                    <div key={key} className="items">
+                        {item.text.map(t => <div className={`${item.type} item"`} key={count++}>{t}</div>)}
+                    </div>)
+            }
+            return (
+                <div key={key}>
+                    <span className={item.type}>{item.text}</span>
+                </div>);
         }
     }
 

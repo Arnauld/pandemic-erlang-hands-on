@@ -19,10 +19,21 @@ import WorldMap from "./worldmap.jsx";
 import Terminal from "./terminal.jsx";
 import Cities from "./core/cities.js";
 import Bash from "./bash/bash.js";
+import InfectCommand from "./core/command/InfectCommand.js";
+import EventsCommand from "./core/command/EventsCommand.js";
+import ClearCommand from "./bash/command/ClearCommand.js";
 
 const cities = new Cities();
-const bash = new Bash();
+const commands = [
+    new InfectCommand(),
+    new EventsCommand(),
+    new ClearCommand()
+];
+const bash = new Bash(commands, ["Welcome! try 'help'"]);
 
+//---------------------------------------------------------
+// DOM
+//---------------------------------------------------------
 const Root = () => (
     <div>
         <AppBar/>

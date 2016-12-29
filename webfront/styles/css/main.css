@@ -64,6 +64,16 @@ body {
     padding: 0;
 }
 
+.terminal .items {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.terminal .items .error,
+.terminal .items .message {
+    width: 10em;
+}
+
 .terminal .error {
     color: #9f1b33;
 }
