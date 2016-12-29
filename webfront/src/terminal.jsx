@@ -33,7 +33,6 @@ class Terminal extends Component {
         const suggestion = this.props.bash.autocomplete(input);
 
         const comod = this.props.bash.checksum;
-        console.log("comod", comod);
         this.setState({comod: comod});
 
         if (suggestion) {

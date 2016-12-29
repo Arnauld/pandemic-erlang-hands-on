@@ -51,6 +51,9 @@ class Bash {
             this.outs.writeCommand(input);
             potentials[0].execute(command, args, this.outs);
         }
+        else if (input.trim().length === 0) {
+            this.outs.writeCommand(input);
+        }
         else {
             this.outs.writeCommand(input);
             this.outs.writeError("Unknown command!");

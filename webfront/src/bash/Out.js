@@ -24,8 +24,6 @@ class Out {
     }
 
     writeMessage(input) {
-        console.log("message: ", input);
-
         this.comod++;
         this.data.push({type: "message", text: input});
     }
