@@ -1,10 +1,17 @@
 import React, {Component} from "react";
 import Snap from "snapsvg-cjs";
+import Fun from "./util/fun";
 import Cities from "./core/cities";
+import Game, {GameListener} from "./core/game";
 import BackgroundImg from "../styles/images/background.jpg";
 import BackgroundSvg from "../styles/images/worldmap.svg";
 
 const Styles = {
+    infection: {
+        fill: "none",
+        stroke: "#E89F5A",
+        strokeWidth: 5
+    },
     city: {
         active: {
             fill: "#8D584C",
@@ -18,7 +25,7 @@ const Styles = {
         }
     },
     text: {
-        active : {
+        active: {
             "fill": "#E89F5A",
             "font-size": "12px"
         },
@@ -29,6 +36,35 @@ const Styles = {
     }
 };
 
+class WorldMapGameListener extends GameListener {
+
+    constructor(worldMap) {
+        super();
+        this.worldMap = worldMap;
+    }
+
+    onInfection(infection) {
+        const byGeneration = Fun.groupBy(infection.changes, c => c.generation);
+        console.log("byGeneration:", byGeneration, typeof byGeneration);
+        const generations = Object.keys(byGeneration).sort((a, b) => a - b);
+        generations.forEach(g => {
+            setTimeout(this.applyChanges(byGeneration[g]), g * 1000);
+        });
+    }
+
+    applyChanges(changes) {
+        changes.forEach(c => {
+            if (c.type === "infected") {
+                this.worldMap.cityInfected(c.city);
+            }
+            else if (c.type === "outbreak") {
+                this.worldMap.cityOutbreak(c.city);
+            }
+        });
+    }
+
+}
+
 class WorldMap extends Component {
     constructor(props) {
         super(props);
@@ -36,10 +72,37 @@ class WorldMap extends Component {
 
     componentDidMount() {
         this.updateCanvas();
+        this.props.game.subscribe(new WorldMapGameListener(this));
     }
 
     componentDidUpdate() {
         this.updateCanvas();
+    }
+
+    cityInfected(city) {
+        const node = this.props.cities.nodeOf(city);
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const anims = s.select("g[id='g-anims']");
+        const circle = anims
+            .circle(node.cx, node.cy, 10)
+            .attr(Styles.infection);
+        circle.animate({r: 60, opacity: 0.2}, 1000, () => {
+            circle.remove();
+            console.log("animation done!");
+        });
+
+        // Snap.animate(10, 60, val => {
+        //     circle.attr({r: val});
+        // }, 1000, () => {
+        //     circle.remove();
+        //     console.log("animation done!");
+        // });
+    }
+
+    cityOutbreak(city) {
+        const node = this.props.cities.nodeOf(city);
+
     }
 
     updateCanvas() {
@@ -52,24 +115,25 @@ class WorldMap extends Component {
         const links = s.g().attr({id: "g-links"});
         const cities = s.g().attr({id: "g-cities"});
         const names = s.g().attr({id: "g-names"});
-        if(this.props.showBackgroundImage) {
+        const anims = s.g().attr({id: "g-anims"});
+        if (this.props.showBackgroundImage) {
             const image = background.image(BackgroundImg, 0, 0, 1200, 849);
         }
 
-        Snap.load(BackgroundSvg, function(f) {
+        Snap.load(BackgroundSvg, function (f) {
             const g1 = f.select("g[id='layer1']");
-            g1.attr({"transform":"matrix(1.105,0,0,1.105,-120,-90)"});
+            g1.attr({"transform": "matrix(1.105,0,0,1.105,-120,-90)"});
             g1.selectAll("path").forEach(n => n.attr({stroke: "#444"}));
             background.add(g1);
 
             const g2 = f.select("g[id='layer3']");
-            g2.attr({"transform":"matrix(1.105,0,0,1.105,-120,-90)"});
+            g2.attr({"transform": "matrix(1.105,0,0,1.105,-120,-90)"});
             g2.selectAll("path").forEach(n => n.attr({stroke: "#eee"}));
             background.add(g2);
         });
 
 
-        this.props.cities.all.forEach(node => {
+        this.props.cities.nodes.forEach(node => {
             const disabled = Math.random() > 0.3;
             const newCity = cities.circle(node.cx, node.cy, 10)
                 .attr(disabled ? Styles.city.disabled : Styles.city.active)
@@ -105,7 +169,8 @@ class WorldMap extends Component {
 }
 
 WorldMap.propTypes = {
-    cities: React.PropTypes.instanceOf(Cities).isRequired
+    cities: React.PropTypes.instanceOf(Cities).isRequired,
+    game: React.PropTypes.instanceOf(Game).isRequired
 };
 
 WorldMap.defaultProps = {

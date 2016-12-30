@@ -16,16 +16,18 @@ import React from "react";
 import ReactDOM from "react-dom";
 import AppBar from "./appbar.jsx";
 import WorldMap from "./worldmap.jsx";
-import Terminal from "./terminal.jsx";
+import Terminal from "./bash/terminal.jsx";
 import Cities from "./core/cities.js";
+import Game from "./core/game.js";
 import Bash from "./bash/bash.js";
 import InfectCommand from "./core/command/InfectCommand.js";
 import EventsCommand from "./core/command/EventsCommand.js";
 import ClearCommand from "./bash/command/ClearCommand.js";
 
 const cities = new Cities();
+const game = new Game(cities);
 const commands = [
-    new InfectCommand(),
+    new InfectCommand(game, cities),
     new EventsCommand(),
     new ClearCommand()
 ];
@@ -40,7 +42,7 @@ const Root = () => (
         <div className="container">
             <div className="row">
                 <div className="col-lg-8">
-                    <WorldMap cities={cities}/>
+                    <WorldMap cities={cities} game={game}/>
                 </div>
                 <div className="col-lg-4">
                     <Terminal bash={bash}/>

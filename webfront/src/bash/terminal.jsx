@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import Bash from "./bash/bash";
+import Bash from "./bash";
 
 const CTRL_CHAR_CODE = 17;
 const L_CHAR_CODE = 76;
