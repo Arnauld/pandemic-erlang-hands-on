@@ -43,19 +43,19 @@ class AppBar extends Component {
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Navbar.Form pullLeft>
-                        <FormGroup
-                            validationState={this.getValidationState()}>
-                            <ControlLabel>&gt;</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Search"
-                                         className="cli"
-                                         onChange={this.handleChange}/>
-                            <FormControl.Feedback />
-                        </FormGroup>
-                        {' '}
-                        <Button type="submit">Submit</Button>
-                    </Navbar.Form>
+                    {/*<Navbar.Form pullLeft>*/}
+                        {/*<FormGroup*/}
+                            {/*validationState={this.getValidationState()}>*/}
+                            {/*<ControlLabel>&gt;</ControlLabel>*/}
+                            {/*<FormControl type="text"*/}
+                                         {/*placeholder="Search"*/}
+                                         {/*className="cli"*/}
+                                         {/*onChange={this.handleChange}/>*/}
+                            {/*<FormControl.Feedback />*/}
+                        {/*</FormGroup>*/}
+                        {/*{' '}*/}
+                        {/*<Button type="submit">Submit</Button>*/}
+                    {/*</Navbar.Form>*/}
                     {/*<Nav>*/}
                     {/*<NavItem eventKey={1} href="#">Link</NavItem>*/}
                     {/*<NavItem eventKey={2} href="#">Link</NavItem>*/}
