@@ -11,13 +11,12 @@ class Game {
     }
 
     recursiveInfect(infection) {
-        console.debug("recursiveInfect.0", infection);
         const {toInfect, outbreak, states, changes} = infection;
 
         if (toInfect.length === 0)
             return infection;
 
-        const [city, generation] = toInfect.shift();
+        const [city, generation, source] = toInfect.shift();
 
         // keep a local copy to adjust state before updating cities
         if (!states[city]) {
@@ -27,25 +26,33 @@ class Game {
 
         if (cityState.infectionLevel < 3) {
             cityState.infectionLevel = cityState.infectionLevel + 1;
-            changes.push({type: "infected", city: city, generation: generation});
+            changes.push({type: "infected", city: city, generation: generation, source: source});
         }
         else if (!outbreak.includes(city)) {
+            console.error("Outbreak....", city);
             outbreak.push(city);
             changes.push({type: "outbreak", city: city, generation: generation});
             const links = this.cities.linksOf(city);
-            links.forEach(l => toInfect.push([l, generation + 1]));
+            links.forEach(l => toInfect.push([l, generation + 1, city]));
         }
         return this.recursiveInfect(infection);
     }
 
-    infect(cities) {
+    infect(citiesToInfect) {
         //simulate an async ajax call & response
         setTimeout(() => {
-            const citiesWithGeneration = cities.map(c => [c, 0]);
-            const infection = this.recursiveInfect({toInfect: citiesWithGeneration, outbreak: [], states: {}, changes: []});
+            const citiesWithGeneration = citiesToInfect.map(city => [city, 0, null]);
+            const infection = this.recursiveInfect({
+                toInfect: citiesWithGeneration,
+                outbreak: [],
+                states: {},
+                changes: []
+            });
 
             console.log("Server: city infected: ", infection);
             console.log("Updating cities states: ", infection.states);
+            Object.keys(infection.states).forEach(k => this.cities.updateState(k, infection.states[k]));
+
             this.listeners.forEach(l => l.onInfection(infection));
         }, 1000);
     }

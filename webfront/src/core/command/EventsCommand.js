@@ -10,7 +10,6 @@ class EventsCommand extends Command {
     }
 
     autocomplete(input, command, args, outs) {
-        console.log("EventsCommand#autocomplete", input, args);
         if (args.length === 0) {
             outs.writeCommand(input);
             this.subCommands.forEach(n => outs.writeMessage(this.command + " " + n));

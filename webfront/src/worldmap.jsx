@@ -7,6 +7,11 @@ import BackgroundImg from "../styles/images/background.jpg";
 import BackgroundSvg from "../styles/images/worldmap.svg";
 
 const Styles = {
+    outbreak: {
+        fill: "none",
+        stroke: "#9f1b33",
+        strokeWidth: 10
+    },
     infection: {
         fill: "none",
         stroke: "#E89F5A",
@@ -45,10 +50,9 @@ class WorldMapGameListener extends GameListener {
 
     onInfection(infection) {
         const byGeneration = Fun.groupBy(infection.changes, c => c.generation);
-        console.log("byGeneration:", byGeneration, typeof byGeneration);
         const generations = Object.keys(byGeneration).sort((a, b) => a - b);
         generations.forEach(g => {
-            setTimeout(this.applyChanges(byGeneration[g]), g * 1000);
+            setTimeout(() => this.applyChanges(byGeneration[g]), g * 2000);
         });
     }
 
@@ -86,10 +90,10 @@ class WorldMap extends Component {
         const anims = s.select("g[id='g-anims']");
         const circle = anims
             .circle(node.cx, node.cy, 10)
+            .attr({"class": "infection"})
             .attr(Styles.infection);
         circle.animate({r: 60, opacity: 0.2}, 1000, () => {
             circle.remove();
-            console.log("animation done!");
         });
 
         // Snap.animate(10, 60, val => {
@@ -102,7 +106,25 @@ class WorldMap extends Component {
 
     cityOutbreak(city) {
         const node = this.props.cities.nodeOf(city);
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const anims = s.select("g[id='g-anims']");
 
+        const anim = (n) => {
+            if (n == 0)
+                return;
+
+            const circle = anims
+                .circle(node.cx, node.cy, 10)
+                .attr({"class": "outbreak"})
+                .attr(Styles.outbreak);
+            circle.animate({r: 50, opacity: 0.2}, 500, () => {
+                circle.remove();
+                anim(n - 1);
+            });
+        };
+
+        anim(3);
     }
 
     updateCanvas() {

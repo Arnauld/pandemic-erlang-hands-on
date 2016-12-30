@@ -27,6 +27,10 @@ class Cities {
         return this.states[city];
     }
 
+    updateState(city, newState) {
+        Object.assign(this.states[city], newState);
+    }
+
     linksOf(city) {
         if (city === "paris")
             return ["algiers", "madrid", "london", "essen", "milan"];

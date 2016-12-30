@@ -80,3 +80,19 @@ body {
 .terminal .message {
     color: #6b6b6b;
 }
+
+
+.infection {
+    /*stroke-dasharray: 100px;*/
+    /*stroke-dashoffset: 100px;*/
+    /*animation: progressAnimation 600ms linear infinite;*/
+}
+
+@keyframes progressAnimation {
+    from {
+        stroke-dashoffset: 100px;
+    }
+    to {
+        stroke-dashoffset: 300px;
+    }
+}
