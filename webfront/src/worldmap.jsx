@@ -5,6 +5,7 @@ import Cities from "./core/cities";
 import Game, {GameListener} from "./core/game";
 import BackgroundImg from "../styles/images/background.jpg";
 import BackgroundSvg from "../styles/images/worldmap.svg";
+import BioHazardSvg from "../styles/images/Radiation_warning_symbol2.svg";
 
 const Styles = {
     outbreak: {
@@ -52,7 +53,7 @@ class WorldMapGameListener extends GameListener {
         const byGeneration = Fun.groupBy(infection.changes, c => c.generation);
         const generations = Object.keys(byGeneration).sort((a, b) => a - b);
         generations.forEach(g => {
-            setTimeout(() => this.applyChanges(byGeneration[g]), g * 2000);
+            setTimeout(() => this.applyChanges(byGeneration[g]), g * 6000);
         });
     }
 
@@ -95,13 +96,6 @@ class WorldMap extends Component {
         circle.animate({r: 60, opacity: 0.2}, 1000, () => {
             circle.remove();
         });
-
-        // Snap.animate(10, 60, val => {
-        //     circle.attr({r: val});
-        // }, 1000, () => {
-        //     circle.remove();
-        //     console.log("animation done!");
-        // });
     }
 
     cityOutbreak(city) {
@@ -109,6 +103,24 @@ class WorldMap extends Component {
         const svg = this.refs.svg;
         const s = Snap(svg);
         const anims = s.select("g[id='g-anims']");
+
+        // --- rotating radiation sign
+        const group = anims.g();
+        Snap.load(BioHazardSvg, f => {
+            f.selectAll("g").forEach(g => {
+                g.selectAll("circle").attr({"fill": "#9f1b33"});
+                g.selectAll("path").attr({"fill": "#9f1b33"});
+                g.attr({"transform": "scale(0.25, 0.25)"});
+                group.add(g);
+            });
+            group.attr({"transform": Snap.matrix().translate(node.cx, node.cy)});
+        });
+        const n = 360 * 6;
+        Snap.animate(0, n, val => {
+            const s = Math.min(0.15, 0.15 * val / (360 * 4));
+            group.selectAll("g").forEach(g => g.attr({"transform": `scale(${s}, ${s})`}));
+            group.attr({"transform": `rotate(${val},${node.cx},${node.cy}) translate(${node.cx},${node.cy})`});
+        }, 1000 * 6, () => group.remove());
 
         const anim = (n) => {
             if (n == 0)
@@ -124,7 +136,7 @@ class WorldMap extends Component {
             });
         };
 
-        anim(3);
+        setTimeout(() => anim(4), 3000);
     }
 
     updateCanvas() {
@@ -176,6 +188,11 @@ class WorldMap extends Component {
                     name: node.name
                 })
                 .drag();
+
+
+            if (node.name === "paris") {
+
+            }
         });
     }
 
