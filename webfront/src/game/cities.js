@@ -5,7 +5,10 @@ class Cities {
     constructor() {
         const states = {};
         data.nodes.forEach(n => {
-            states[n.name] = {infectionLevel: 0};
+            states[n.name] = {
+                infectionLevel: 0,
+                disabled: Math.random() > 0.3
+            };
         });
 
         this.states = states;
@@ -13,6 +16,10 @@ class Cities {
 
     get nodes() {
         return data.nodes;
+    }
+
+    get links() {
+        return data.links;
     }
 
     nodeOf(city) {
@@ -32,11 +39,10 @@ class Cities {
     }
 
     linksOf(city) {
-        if (city === "paris")
-            return ["algiers", "madrid", "london", "essen", "milan"];
-        if (city == "london")
-            return ["new_york", "madrid", "paris", "essen"];
-        return [];
+        return data
+            .links
+            .filter(([c1, c2]) => c1 === city || c2 === city)
+            .map(([c1, c2]) => c1 === city ? c2 : c1);
     }
 
 }

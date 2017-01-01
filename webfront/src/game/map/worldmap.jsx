@@ -1,11 +1,11 @@
 import React, {Component} from "react";
 import Snap from "snapsvg-cjs";
-import Fun from "./util/fun";
-import Cities from "./core/cities";
-import Game, {GameListener} from "./core/game";
-import BackgroundImg from "../styles/images/background.jpg";
-import BackgroundSvg from "../styles/images/worldmap.svg";
-import BioHazardSvg from "../styles/images/Radiation_warning_symbol2.svg";
+import Fun from "../../util/fun";
+import Cities from "../cities";
+import Game, {GameListener} from "../game";
+import BackgroundImg from "../../../styles/images/background.jpg";
+import BackgroundSvg from "../../../styles/images/worldmap.svg";
+import BioHazardSvg from "../../../styles/images/Radiation_warning_symbol2.svg";
 
 const Styles = {
     outbreak: {
@@ -76,6 +76,7 @@ class WorldMap extends Component {
     }
 
     componentDidMount() {
+        this.initCanvas();
         this.updateCanvas();
         this.props.game.subscribe(new WorldMapGameListener(this));
     }
@@ -108,8 +109,8 @@ class WorldMap extends Component {
         const group = anims.g();
         Snap.load(BioHazardSvg, f => {
             f.selectAll("g").forEach(g => {
-                g.selectAll("circle").attr({"fill": "#9f1b33"});
-                g.selectAll("path").attr({"fill": "#9f1b33"});
+                g.selectAll("circle").attr({"fill": Styles.outbreak.stroke});
+                g.selectAll("path").attr({"fill": Styles.outbreak.stroke});
                 g.attr({"transform": "scale(0.25, 0.25)"});
                 group.add(g);
             });
@@ -139,7 +140,7 @@ class WorldMap extends Component {
         setTimeout(() => anim(4), 3000);
     }
 
-    updateCanvas() {
+    initCanvas() {
         const svg = this.refs.svg;
         const s = Snap(svg);
         const background = s.g().attr({
@@ -150,6 +151,19 @@ class WorldMap extends Component {
         const cities = s.g().attr({id: "g-cities"});
         const names = s.g().attr({id: "g-names"});
         const anims = s.g().attr({id: "g-anims"});
+    }
+
+    updateCanvas() {
+        this.drawBackground();
+        this.drawCities();
+        this.drawCityNames();
+        this.drawLinks();
+    }
+
+    drawBackground() {
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const background = s.select("g[id='g-background']");
         if (this.props.showBackgroundImage) {
             const image = background.image(BackgroundImg, 0, 0, 1200, 849);
         }
@@ -165,10 +179,15 @@ class WorldMap extends Component {
             g2.selectAll("path").forEach(n => n.attr({stroke: "#eee"}));
             background.add(g2);
         });
+    }
 
+    drawCities() {
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const cities = s.select("g[id='g-cities']");
 
         this.props.cities.nodes.forEach(node => {
-            const disabled = Math.random() > 0.3;
+            const disabled = this.props.cities.stateOf(node.name).disabled;
             const newCity = cities.circle(node.cx, node.cy, 10)
                 .attr(disabled ? Styles.city.disabled : Styles.city.active)
                 .attr({
@@ -178,7 +197,16 @@ class WorldMap extends Component {
                     ty: node.ty
                 })
                 .drag();
+        });
+    }
 
+    drawCityNames() {
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const names = s.select("g[id='g-names']");
+
+        this.props.cities.nodes.forEach(node => {
+            const disabled = this.props.cities.stateOf(node.name).disabled;
             const tx = node.tx || (node.cx - 20);
             const ty = node.ty || (node.cy - 15);
             const name = names.text(tx, ty, [node.name])
@@ -188,11 +216,55 @@ class WorldMap extends Component {
                     name: node.name
                 })
                 .drag();
+        });
+    }
 
+    drawLinks() {
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const links = s.select("g[id='g-links']");
 
-            if (node.name === "paris") {
+        this.props.cities.links.forEach(link => {
+            const [city1, city2] = link;
+            const node1 = this.props.cities.nodeOf(city1);
+            const node2 = this.props.cities.nodeOf(city2);
+            if (!node1)
+                console.error("Unknown city ", city1);
+            if (!node2)
+                console.error("Unknown city ", city2);
+
+            if ((link.includes("san_francisco") && link.includes("manila"))
+                || (link.includes("san_francisco") && link.includes("tokyo"))
+                || (link.includes("los_angeles") && link.includes("sydney"))) {
 
             }
+            else {
+                links.polyline(node1.cx, node1.cy, node2.cx, node2.cy)
+                    .attr({
+                        stroke: "#4d4d4d",
+                        strokeWidth: 2
+                    });
+            }
+        });
+        const san_francisco = this.props.cities.nodeOf("san_francisco");
+        const manila = this.props.cities.nodeOf("manila");
+        const tokyo = this.props.cities.nodeOf("tokyo");
+        const los_angeles = this.props.cities.nodeOf("los_angeles");
+        const sydney = this.props.cities.nodeOf("sydney");
+        const specials = [[san_francisco, manila],
+            [san_francisco, tokyo],
+            [los_angeles, sydney]];
+        specials.forEach(([c1, c2]) => {
+            links.polyline(c1.cx, c1.cy, c2.cx - 1000, c2.cy)
+                .attr({
+                    stroke: "#4d4d4d",
+                    strokeWidth: 2
+                });
+            links.polyline(c1.cx + 1000, c1.cy, c2.cx, c2.cy)
+                .attr({
+                    stroke: "#4d4d4d",
+                    strokeWidth: 2
+                });
         });
     }
 

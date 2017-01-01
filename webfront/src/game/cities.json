@@ -76,7 +76,7 @@
       "cx": 510,
       "cy": 144,
       "id": "city10",
-      "name": "st-petersburg",
+      "name": "st_petersburg",
       "tx": "463",
       "ty": "130"
     },
@@ -108,7 +108,7 @@
       "cx": 547,
       "cy": 309,
       "id": "city14",
-      "name": "ryadh",
+      "name": "riyadh",
       "tx": "532",
       "ty": "330"
     },
@@ -164,7 +164,7 @@
       "cx": 731,
       "cy": 296,
       "id": "city21",
-      "name": "hong-kong",
+      "name": "hong_kong",
       "tx": "706",
       "ty": "279"
     },
@@ -180,7 +180,7 @@
       "cx": 726,
       "cy": 243,
       "id": "city23",
-      "name": "shangai",
+      "name": "shanghai",
       "tx": "676",
       "ty": "237"
     },
@@ -212,7 +212,7 @@
       "cx": 825,
       "cy": 270,
       "id": "city27",
-      "name": "ozaka",
+      "name": "osaka",
       "tx": "830",
       "ty": "288"
     },
@@ -220,7 +220,7 @@
       "cx": 734,
       "cy": 369,
       "id": "city28",
-      "name": "ho-chi-minh-city",
+      "name": "ho_chi_minh",
       "tx": "723",
       "ty": "391"
     },
@@ -252,7 +252,7 @@
       "cx": 499,
       "cy": 335,
       "id": "city32",
-      "name": "karthoum",
+      "name": "khartoum",
       "tx": "507",
       "ty": "352"
     },
@@ -284,7 +284,7 @@
       "cx": 300,
       "cy": 434,
       "id": "city36",
-      "name": "sao-paulo",
+      "name": "sao_paulo",
       "tx": "306",
       "ty": "454"
     },
@@ -292,7 +292,7 @@
       "cx": 264,
       "cy": 481,
       "id": "city37",
-      "name": "buenos-aires",
+      "name": "buenos_aires",
       "tx": "266",
       "ty": "502"
     },
@@ -348,7 +348,7 @@
       "cx": 146,
       "cy": 304,
       "id": "city44",
-      "name": "mexico-city",
+      "name": "mexico_city",
       "tx": "118",
       "ty": "325"
     },
@@ -356,7 +356,7 @@
       "cx": 88,
       "cy": 285,
       "id": "city45",
-      "name": "los-angeles",
+      "name": "los_angeles",
       "tx": "67",
       "ty": "306"
     },
@@ -380,9 +380,379 @@
       "cx": 74,
       "cy": 223,
       "id": "city48",
-      "name": "san-francisco",
+      "name": "san_francisco",
       "tx": "48",
       "ty": "207"
     }
+  ],
+  "links": [
+    [
+      "san_francisco",
+      "chicago"
+    ],
+    [
+      "chicago",
+      "atlanta"
+    ],
+    [
+      "chicago",
+      "montreal"
+    ],
+    [
+      "atlanta",
+      "washington"
+    ],
+    [
+      "montreal",
+      "washington"
+    ],
+    [
+      "montreal",
+      "new_york"
+    ],
+    [
+      "washington",
+      "new_york"
+    ],
+    [
+      "new_york",
+      "madrid"
+    ],
+    [
+      "new_york",
+      "london"
+    ],
+    [
+      "madrid",
+      "london"
+    ],
+    [
+      "madrid",
+      "paris"
+    ],
+    [
+      "london",
+      "paris"
+    ],
+    [
+      "london",
+      "essen"
+    ],
+    [
+      "paris",
+      "essen"
+    ],
+    [
+      "paris",
+      "milan"
+    ],
+    [
+      "essen",
+      "milan"
+    ],
+    [
+      "essen",
+      "st_petersburg"
+    ],
+    [
+      "algiers",
+      "paris"
+    ],
+    [
+      "algiers",
+      "madrid"
+    ],
+    [
+      "algiers",
+      "istanbul"
+    ],
+    [
+      "algiers",
+      "cairo"
+    ],
+    [
+      "istanbul",
+      "milan"
+    ],
+    [
+      "istanbul",
+      "cairo"
+    ],
+    [
+      "istanbul",
+      "baghdad"
+    ],
+    [
+      "istanbul",
+      "moscow"
+    ],
+    [
+      "istanbul",
+      "st_petersburg"
+    ],
+    [
+      "cairo",
+      "baghdad"
+    ],
+    [
+      "cairo",
+      "riyadh"
+    ],
+    [
+      "moscow",
+      "st_petersburg"
+    ],
+    [
+      "baghdad",
+      "riyadh"
+    ],
+    [
+      "baghdad",
+      "karachi"
+    ],
+    [
+      "baghdad",
+      "tehran"
+    ],
+    [
+      "tehran",
+      "moscow"
+    ],
+    [
+      "riyadh",
+      "karachi"
+    ],
+    [
+      "tehran",
+      "karachi"
+    ],
+    [
+      "tehran",
+      "delhi"
+    ],
+    [
+      "karachi",
+      "delhi"
+    ],
+    [
+      "karachi",
+      "mumbai"
+    ],
+    [
+      "delhi",
+      "kolkata"
+    ],
+    [
+      "delhi",
+      "mumbai"
+    ],
+    [
+      "mumbai",
+      "chennai"
+    ],
+    [
+      "kolkata",
+      "chennai"
+    ],
+    [
+      "jakarta",
+      "bangkok"
+    ],
+    [
+      "jakarta",
+      "ho_chi_minh"
+    ],
+    [
+      "jakarta",
+      "chennai"
+    ],
+    [
+      "jakarta",
+      "sydney"
+    ],
+    [
+      "sydney",
+      "manila"
+    ],
+    [
+      "bangkok",
+      "chennai"
+    ],
+    [
+      "bangkok",
+      "kolkata"
+    ],
+    [
+      "bangkok",
+      "ho_chi_minh"
+    ],
+    [
+      "bangkok",
+      "hong_kong"
+    ],
+    [
+      "ho_chi_minh",
+      "manila"
+    ],
+    [
+      "ho_chi_minh",
+      "hong_kong"
+    ],
+    [
+      "manila",
+      "san_francisco"
+    ],
+    [
+      "manila",
+      "hong_kong"
+    ],
+    [
+      "manila",
+      "taipei"
+    ],
+    [
+      "hong_kong",
+      "taipei"
+    ],
+    [
+      "hong_kong",
+      "shanghai"
+    ],
+    [
+      "hong_kong",
+      "kolkata"
+    ],
+    [
+      "taipei",
+      "osaka"
+    ],
+    [
+      "taipei",
+      "shanghai"
+    ],
+    [
+      "osaka",
+      "tokyo"
+    ],
+    [
+      "shanghai",
+      "beijing"
+    ],
+    [
+      "shanghai",
+      "seoul"
+    ],
+    [
+      "shanghai",
+      "tokyo"
+    ],
+    [
+      "beijing",
+      "seoul"
+    ],
+    [
+      "seoul",
+      "tokyo"
+    ],
+    [
+      "tokyo",
+      "san_francisco"
+    ],
+    [
+      "los_angeles",
+      "sydney"
+    ],
+    [
+      "los_angeles",
+      "mexico_city"
+    ],
+    [
+      "los_angeles",
+      "san_francisco"
+    ],
+    [
+      "los_angeles",
+      "chicago"
+    ],
+    [
+      "mexico_city",
+      "miami"
+    ],
+    [
+      "mexico_city",
+      "chicago"
+    ],
+    [
+      "mexico_city",
+      "bogota"
+    ],
+    [
+      "mexico_city",
+      "lima"
+    ],
+    [
+      "lima",
+      "bogota"
+    ],
+    [
+      "santiago",
+      "lima"
+    ],
+    [
+      "bogota",
+      "miami"
+    ],
+    [
+      "bogota",
+      "sao_paulo"
+    ],
+    [
+      "bogota",
+      "buenos_aires"
+    ],
+    [
+      "miami",
+      "atlanta"
+    ],
+    [
+      "miami",
+      "washington"
+    ],
+    [
+      "buenos_aires",
+      "sao_paulo"
+    ],
+    [
+      "sao_paulo",
+      "madrid"
+    ],
+    [
+      "sao_paulo",
+      "lagos"
+    ],
+    [
+      "lagos",
+      "khartoum"
+    ],
+    [
+      "lagos",
+      "kinshasa"
+    ],
+    [
+      "kinshasa",
+      "khartoum"
+    ],
+    [
+      "kinshasa",
+      "johannesburg"
+    ],
+    [
+      "johannesburg",
+      "khartoum"
+    ],
+    [
+      "khartoum",
+      "cairo"
+    ]
   ]
 }

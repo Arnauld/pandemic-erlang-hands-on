@@ -15,13 +15,13 @@ import Main from "../styles/css/main.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import AppBar from "./appbar.jsx";
-import WorldMap from "./worldmap.jsx";
+import WorldMap from "./game/map/worldmap.jsx";
 import Terminal from "./bash/terminal.jsx";
-import Cities from "./core/cities.js";
-import Game from "./core/game.js";
+import Cities from "./game/cities.js";
+import Game from "./game/game.js";
 import Bash from "./bash/bash.js";
-import InfectCommand from "./core/command/InfectCommand.js";
-import EventsCommand from "./core/command/EventsCommand.js";
+import InfectCommand from "./game/command/InfectCommand.js";
+import EventsCommand from "./game/command/EventsCommand.js";
 import ClearCommand from "./bash/command/ClearCommand.js";
 
 const cities = new Cities();
