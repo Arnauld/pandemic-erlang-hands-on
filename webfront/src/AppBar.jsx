@@ -18,19 +18,29 @@ class AppBar extends Component {
         this.handleChange = this.handleChange.bind(this)
     }
 
-    getValidationState() {
-        const cmd = this.state.value;
-        if (cmd.startsWith("infect")) {
-            return 'warning';
-        }
-        const length = this.state.value.length;
-        if (length > 10) return 'success';
-        else if (length > 5) return 'warning';
-        else if (length > 0) return 'error';
+    componentDidMount() {
+        this.props.controls.forEach(c => c.appBar(this));
+    }
+
+    setCity(cityState) {
+        this.setState({city: cityState});
     }
 
     handleChange(e) {
         this.setState({value: e.target.value});
+    }
+
+    renderCity() {
+        if (!this.state.city)
+            return [];
+
+        return (
+            <div className="pandemic container">
+                <div className="row">
+                    <span className="col-md-1">{this.state.city.name}</span>
+                    <span className="col-md-1">{this.state.city.infectionLevel}</span>
+                </div>
+            </div>);
     }
 
     render() {
@@ -43,18 +53,19 @@ class AppBar extends Component {
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
+                    {this.renderCity()}
                     {/*<Navbar.Form pullLeft>*/}
-                        {/*<FormGroup*/}
-                            {/*validationState={this.getValidationState()}>*/}
-                            {/*<ControlLabel>&gt;</ControlLabel>*/}
-                            {/*<FormControl type="text"*/}
-                                         {/*placeholder="Search"*/}
-                                         {/*className="cli"*/}
-                                         {/*onChange={this.handleChange}/>*/}
-                            {/*<FormControl.Feedback />*/}
-                        {/*</FormGroup>*/}
-                        {/*{' '}*/}
-                        {/*<Button type="submit">Submit</Button>*/}
+                    {/*<FormGroup*/}
+                    {/*validationState={this.getValidationState()}>*/}
+                    {/*<ControlLabel>&gt;</ControlLabel>*/}
+                    {/*<FormControl type="text"*/}
+                    {/*placeholder="Search"*/}
+                    {/*className="cli"*/}
+                    {/*onChange={this.handleChange}/>*/}
+                    {/*<FormControl.Feedback />*/}
+                    {/*</FormGroup>*/}
+                    {/*{' '}*/}
+                    {/*<Button type="submit">Submit</Button>*/}
                     {/*</Navbar.Form>*/}
                     {/*<Nav>*/}
                     {/*<NavItem eventKey={1} href="#">Link</NavItem>*/}

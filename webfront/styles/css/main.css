@@ -1,9 +1,10 @@
-html,body{
-    margin:0;
-    padding:0;
+html, body {
+    margin: 0;
+    padding: 0;
     height: 100%;
     background: #030303;
 }
+
 body {
     /*font-family: source-sans-pro, sans-serif;*/
     font-family: my_underwoodregular, serif;
@@ -22,10 +23,14 @@ body {
     color: #8D584C;
 }
 
-.pandemic.navbar-brand,
-.pandemic {
+.pandemic.navbar-brand {
     font-family: my_underwoodregular, serif;
     font-size: 40px;
+    color: #E89F5A;
+}
+
+.pandemic {
+    font-family: my_underwoodregular, serif;
     color: #E89F5A;
 }
 
@@ -43,6 +48,7 @@ body {
     height: 636px;
     overflow: scroll;
 }
+
 .terminal input:focus {
     outline: none;
 }
@@ -77,10 +83,10 @@ body {
 .terminal .error {
     color: #9f1b33;
 }
+
 .terminal .message {
     color: #6b6b6b;
 }
-
 
 .infection {
     /*stroke-dasharray: 100px;*/
@@ -95,4 +101,8 @@ body {
     to {
         stroke-dashoffset: 300px;
     }
+}
+
+.hidden {
+    display: none;
 }

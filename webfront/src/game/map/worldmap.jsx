@@ -19,6 +19,13 @@ const Styles = {
         strokeWidth: 5
     },
     city: {
+        selected: {
+            fill: "none",
+            stroke: "#E89F5A",
+            strokeDasharray: "5px",
+            strokeDashoffset: "5px",
+            strokeWidth: 3
+        },
         active: {
             fill: "#8D584C",
             stroke: "#E89F5A",
@@ -79,10 +86,19 @@ class WorldMap extends Component {
         this.initCanvas();
         this.updateCanvas();
         this.props.game.subscribe(new WorldMapGameListener(this));
+        this.props.controls.forEach(c => c.worldmap(this));
     }
 
     componentDidUpdate() {
         this.updateCanvas();
+    }
+
+    citySelected(city) {
+        this.props.controls.forEach(c => {
+            if (c.citySelected)
+                c.citySelected(city);
+        });
+        this.drawCitySelection(city);
     }
 
     cityInfected(city) {
@@ -153,6 +169,36 @@ class WorldMap extends Component {
         const anims = s.g().attr({id: "g-anims"});
     }
 
+    toggleDisplay(layer) {
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        if (layer === "background") {
+            const layer = s.select("g[id='g-background']");
+            layer.toggleClass("hidden");
+            return;
+        }
+        if (layer === "cities") {
+            const layer = s.select("g[id='g-cities']");
+            layer.toggleClass("hidden");
+            return;
+        }
+        if (layer === "cityNames") {
+            const layer = s.select("g[id='g-names']");
+            layer.toggleClass("hidden");
+            return;
+        }
+        if (layer === "cityHints") {
+            const layer = s.select("g[id='g-background']").select("g[id='layer3']");
+            layer.toggleClass("hidden");
+            return;
+        }
+        if (layer === "links") {
+            const layer = s.select("g[id='g-links']");
+            layer.toggleClass("hidden");
+            return;
+        }
+    }
+
     updateCanvas() {
         this.drawBackground();
         this.drawCities();
@@ -182,6 +228,7 @@ class WorldMap extends Component {
     }
 
     drawCities() {
+        const self = this;
         const svg = this.refs.svg;
         const s = Snap(svg);
         const cities = s.select("g[id='g-cities']");
@@ -197,7 +244,23 @@ class WorldMap extends Component {
                     ty: node.ty
                 })
                 .drag();
+            newCity.node.onclick = () => self.citySelected(node.name);
         });
+    }
+
+    drawCitySelection(city) {
+        const self = this;
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const cities = s.select("g[id='g-cities']");
+        const node = this.props.cities.nodeOf(city);
+
+        cities.selectAll("circle[id='selected']").forEach(n => n.remove());
+        cities.circle(node.cx, node.cy, 17)
+            .attr(Styles.city.selected)
+            .attr({
+                id: "selected"
+            });
     }
 
     drawCityNames() {
