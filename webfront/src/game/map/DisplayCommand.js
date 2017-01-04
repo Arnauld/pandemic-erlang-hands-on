@@ -1,6 +1,6 @@
 import Command from "../../bash/Command";
 import Fun from "../../util/fun";
-import {Layer} from "./worldmap.jsx";
+import {Layer} from "./Worldmap.jsx";
 import {toggleLayer} from "../../actions";
 
 class DisplayCommand extends Command {
