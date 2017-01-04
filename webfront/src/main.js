@@ -21,6 +21,7 @@ import Cities from "./game/cities.js";
 import Game, {GameListener} from "./game/game.js";
 import Bash from "./bash/bash.js";
 import InfectCommand from "./game/command/InfectCommand.js";
+import SelectCommand from "./game/command/SelectCommand.js";
 import EventsCommand from "./game/command/EventsCommand.js";
 import ClearCommand from "./bash/command/ClearCommand.js";
 import DisplayCommand from "./game/map/DisplayCommand";
@@ -53,6 +54,7 @@ const commands = [
     new InfectCommand(game, cities),
     new EventsCommand(),
     new ClearCommand(),
+    new SelectCommand(store, cities),
     worldMapCommand
 ];
 const bash = new Bash(commands, ["Welcome! try 'help'"]);

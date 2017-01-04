@@ -1,4 +1,11 @@
-import {CITY_SELECTED, LAYER_TOGGLED, INFECTION_RECEIVED, CITY_STATES_INITIALIZED, CITY_STATE_UPDATED} from "./actions";
+import {
+    CITY_SELECTED,
+    CITIES_SELECTED,
+    LAYER_TOGGLED,
+    INFECTION_RECEIVED,
+    CITY_STATES_INITIALIZED,
+    CITY_STATE_UPDATED
+} from "./actions";
 import {INITIAL_LAYERS} from "./game/map/worldmap.jsx";
 
 const initialState = {
@@ -13,6 +20,9 @@ function pandemicApp(state = initialState, action) {
     switch (action.type) {
         case CITY_SELECTED:
             return Object.assign({}, state, {city_selection: [action.city]});
+
+        case CITIES_SELECTED:
+            return Object.assign({}, state, {city_selection: action.cities.slice()});
 
         case LAYER_TOGGLED: {
             const newLayers = Object.assign({}, state.layers);

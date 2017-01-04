@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 
 class AppBar extends Component {
-    constructor(cities) {
+    constructor() {
         super();
         this.state = {value: ''};
     }
@@ -20,25 +20,26 @@ class AppBar extends Component {
     componentDidMount() {
         const store = this.props.store;
         store.subscribe(() => {
-            let citySelection = store.getState().city_selection[0];
-            this.setState({city: citySelection})
+            let citySelection = store.getState().city_selection;
+            this.setState({cities: citySelection})
         });
     }
 
     renderCity() {
-        if (!this.state.city)
+        if (!this.state.cities || this.state.cities.length === 0)
             return [];
 
-        // grab the latest state
-        const info = this.props.cities.stateOf(this.state.city);
-
-        return (
-            <div className="pandemic container">
-                <div className="row">
-                    <span className="col-md-1">{info.name}</span>
-                    <span className="col-md-1">{info.infectionLevel}</span>
-                </div>
-            </div>);
+        return (<div className="pandemic appbar-cities">
+            {
+                this.state.cities.map((city, key) => {
+                    const info = this.props.cities.stateOf(city);
+                    return (<div key={key} className="appbar-city">
+                        <div className="name">{info.name}</div>
+                        <div className="infectionLevel">{info.infectionLevel}</div>
+                    </div>);
+                })
+            }
+        </div>);
     }
 
     render() {

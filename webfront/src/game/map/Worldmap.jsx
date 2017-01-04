@@ -76,7 +76,7 @@ class WorldMap extends Component {
             const state = this.props.store.getState();
             // TODO find a more suitable way?
             // there is no shadow dom here, thus one need to make the diff by ourself
-            this.drawCitySelection(state.city_selection[0]);
+            this.drawCitySelection(state.city_selection);
             this.updateLayersVisibility(state.layers);
             this.processEvents(state.events);
         });
@@ -280,23 +280,23 @@ class WorldMap extends Component {
         });
     }
 
-    drawCitySelection(city) {
+    drawCitySelection(cities) {
         const svg = this.refs.svg;
         const s = Snap(svg);
 
         // unselect previous one
-        const cities = s.select("g[id='g-cities']");
-        cities.selectAll("circle[id='selected']").forEach(n => n.remove());
+        const citiesLayer = s.select("g[id='g-cities']");
+        citiesLayer.selectAll("circle[class='selected']").forEach(n => n.remove());
 
         // select if defined
-        if (city) {
+        cities.forEach(city => {
             const node = this.props.cities.nodeOf(city);
-            cities.circle(node.cx, node.cy, 17)
+            citiesLayer.circle(node.cx, node.cy, 17)
                 .attr(Styles.city.selected)
                 .attr({
-                    id: "selected"
+                    class: "selected"
                 });
-        }
+        });
     }
 
     drawCityNames() {

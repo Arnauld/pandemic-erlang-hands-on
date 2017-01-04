@@ -2,6 +2,7 @@
  * action types
  */
 export const CITY_SELECTED = "city-selected";
+export const CITIES_SELECTED = "cities-selected";
 export const LAYER_TOGGLED = "display-layer";
 export const INFECTION_RECEIVED = "infection-received";
 export const CITY_STATES_INITIALIZED = "city-states-initialized";
@@ -12,6 +13,10 @@ export const CITY_STATE_UPDATED = "city-state-updated";
  */
 export function selectCity(city) {
     return {type: CITY_SELECTED, city}
+}
+
+export function selectCities(cities) {
+    return {type: CITIES_SELECTED, cities}
 }
 
 export function toggleLayer(layer) {
