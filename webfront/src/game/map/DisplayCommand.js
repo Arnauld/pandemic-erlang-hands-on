@@ -1,15 +1,14 @@
 import Command from "../../bash/Command";
 import Fun from "../../util/fun";
+import {Layer} from "./worldmap.jsx";
+import {toggleLayer} from "../../actions";
 
-class WorldMapCommand extends Command {
+class DisplayCommand extends Command {
 
-    constructor() {
+    constructor(store) {
         super("display", "adjust map's display");
-        this.subCommands = ["links", "cities", "cityNames", "cityHints", "background"];
-    }
-
-    worldmap(worldmap) {
-        this.worldmap = worldmap;
+        this.store = store;
+        this.subCommands = [Layer.LINKS, Layer.CITIES, Layer.CITY_HINTS, Layer.CITY_NAMES, Layer.BACKGROUND];
     }
 
     autocomplete(input, command, args, outs) {
@@ -39,8 +38,8 @@ class WorldMapCommand extends Command {
 
 
     execute(command, args, outs) {
-        this.worldmap.toggleDisplay(args[0]);
+        this.store.dispatch(toggleLayer(args[0]));
     }
 }
 
-export default WorldMapCommand
+export default DisplayCommand

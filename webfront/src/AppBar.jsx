@@ -12,33 +12,31 @@ import {
 } from "react-bootstrap";
 
 class AppBar extends Component {
-    constructor() {
+    constructor(cities) {
         super();
         this.state = {value: ''};
-        this.handleChange = this.handleChange.bind(this)
     }
 
     componentDidMount() {
-        this.props.controls.forEach(c => c.appBar(this));
-    }
-
-    setCity(cityState) {
-        this.setState({city: cityState});
-    }
-
-    handleChange(e) {
-        this.setState({value: e.target.value});
+        const store = this.props.store;
+        store.subscribe(() => {
+            let citySelection = store.getState().city_selection[0];
+            this.setState({city: citySelection})
+        });
     }
 
     renderCity() {
         if (!this.state.city)
             return [];
 
+        // grab the latest state
+        const info = this.props.cities.stateOf(this.state.city);
+
         return (
             <div className="pandemic container">
                 <div className="row">
-                    <span className="col-md-1">{this.state.city.name}</span>
-                    <span className="col-md-1">{this.state.city.infectionLevel}</span>
+                    <span className="col-md-1">{info.name}</span>
+                    <span className="col-md-1">{info.infectionLevel}</span>
                 </div>
             </div>);
     }

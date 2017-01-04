@@ -1,17 +1,23 @@
 import data from "./cities.json";
+import {initializeCityStates, updateCityState} from "../actions";
 
 class Cities {
 
-    constructor() {
-        const states = {};
-        data.nodes.forEach(n => {
-            states[n.name] = {
+    constructor(store) {
+        this.store = store;
+        this.initializeRandomStates();
+    }
+
+    initializeRandomStates() {
+        const states = data.nodes.reduce((acc, n) => {
+            acc[n.name] = {
+                name: n.name,
                 infectionLevel: 0,
                 disabled: Math.random() > 0.3
             };
-        });
-
-        this.states = states;
+            return acc;
+        }, {});
+        this.store.dispatch(initializeCityStates(states));
     }
 
     get nodes() {
@@ -31,11 +37,11 @@ class Cities {
     }
 
     stateOf(city) {
-        return this.states[city];
+        return this.store.getState().cityStates[city];
     }
 
     updateState(city, newState) {
-        Object.assign(this.states[city], newState);
+        this.store.dispatch(updateCityState(city, newState));
     }
 
     linksOf(city) {

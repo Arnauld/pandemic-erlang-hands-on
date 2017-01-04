@@ -1,5 +1,5 @@
 class GameListener {
-    onInfection(city) {
+    onInfection(infection) {
     }
 }
 
@@ -29,7 +29,6 @@ class Game {
             changes.push({type: "infected", city: city, generation: generation, source: source});
         }
         else if (!outbreak.includes(city)) {
-            console.error("Outbreak....", city);
             outbreak.push(city);
             changes.push({type: "outbreak", city: city, generation: generation});
             const links = this.cities.linksOf(city);
@@ -49,8 +48,6 @@ class Game {
                 changes: []
             });
 
-            console.log("Server: city infected: ", infection);
-            console.log("Updating cities states: ", infection.states);
             Object.keys(infection.states).forEach(k => this.cities.updateState(k, infection.states[k]));
 
             this.listeners.forEach(l => l.onInfection(infection));
