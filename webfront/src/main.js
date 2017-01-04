@@ -15,27 +15,48 @@ import Main from "../styles/css/main.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import AppBar from "./AppBar.jsx";
-import AppBarControl from "./AppBarControl";
 import WorldMap from "./game/map/worldmap.jsx";
 import Terminal from "./bash/terminal.jsx";
 import Cities from "./game/cities.js";
-import Game from "./game/game.js";
+import Game, {GameListener} from "./game/game.js";
 import Bash from "./bash/bash.js";
 import InfectCommand from "./game/command/InfectCommand.js";
+import SelectCommand from "./game/command/SelectCommand.js";
 import EventsCommand from "./game/command/EventsCommand.js";
 import ClearCommand from "./bash/command/ClearCommand.js";
-import WorldMapCommand from "./game/map/WorldMapCommand.js";
+import DisplayCommand from "./game/map/DisplayCommand";
+//-
+import {createStore} from "redux";
+import pandemicApp from "./reducer";
+//-
+import {infectionReceived} from "./actions";
+let store = createStore(pandemicApp);
 
-const cities = new Cities();
+
+class StoreGameListener extends GameListener {
+    constructor(store) {
+        super();
+        this.store = store;
+    }
+
+    onInfection(infection) {
+        store.dispatch(infectionReceived(infection));
+    }
+}
+
+//-
+const cities = new Cities(store);
 const game = new Game(cities);
-const worldMapCommand = new WorldMapCommand();
+game.subscribe(new StoreGameListener(store));
+
+const worldMapCommand = new DisplayCommand(store);
 const commands = [
     new InfectCommand(game, cities),
     new EventsCommand(),
     new ClearCommand(),
+    new SelectCommand(store, cities),
     worldMapCommand
 ];
-const appBarControl = new AppBarControl(cities);
 const bash = new Bash(commands, ["Welcome! try 'help'"]);
 
 //---------------------------------------------------------
@@ -43,11 +64,11 @@ const bash = new Bash(commands, ["Welcome! try 'help'"]);
 //---------------------------------------------------------
 const Root = () => (
     <div>
-        <AppBar controls={[appBarControl]}/>
+        <AppBar store={store} cities={cities}/>
         <div className="container">
             <div className="row">
                 <div className="col-lg-8">
-                    <WorldMap cities={cities} game={game} controls={[worldMapCommand, appBarControl]}/>
+                    <WorldMap store={store} cities={cities} game={game}/>
                 </div>
                 <div className="col-lg-4">
                     <Terminal bash={bash}/>

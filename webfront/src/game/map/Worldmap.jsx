@@ -3,9 +3,23 @@ import Snap from "snapsvg-cjs";
 import Fun from "../../util/fun";
 import Cities from "../cities";
 import Game, {GameListener} from "../game";
+import {selectCity, INFECTION_RECEIVED} from "../../actions";
 import BackgroundImg from "../../../styles/images/background.jpg";
 import BackgroundSvg from "../../../styles/images/worldmap.svg";
 import BioHazardSvg from "../../../styles/images/Radiation_warning_symbol2.svg";
+
+export const Layer = {
+    LINKS: "links",
+    CITIES: "cities",
+    CITY_NAMES: "cityNames",
+    CITY_HINTS: "cityHints",
+    BACKGROUND: "background"
+};
+export const DEFAULT_LAYERS = [Layer.BACKGROUND, Layer.CITIES, Layer.CITY_NAMES, Layer.CITY_HINTS, Layer.LINKS];
+export const INITIAL_LAYERS = DEFAULT_LAYERS.reduce((acc, l) => {
+    acc[l] = true;
+    return acc
+}, {});
 
 const Styles = {
     outbreak: {
@@ -49,59 +63,68 @@ const Styles = {
     }
 };
 
-class WorldMapGameListener extends GameListener {
-
-    constructor(worldMap) {
-        super();
-        this.worldMap = worldMap;
-    }
-
-    onInfection(infection) {
-        const byGeneration = Fun.groupBy(infection.changes, c => c.generation);
-        const generations = Object.keys(byGeneration).sort((a, b) => a - b);
-        generations.forEach(g => {
-            setTimeout(() => this.applyChanges(byGeneration[g]), g * 6000);
-        });
-    }
-
-    applyChanges(changes) {
-        changes.forEach(c => {
-            if (c.type === "infected") {
-                this.worldMap.cityInfected(c.city);
-            }
-            else if (c.type === "outbreak") {
-                this.worldMap.cityOutbreak(c.city);
-            }
-        });
-    }
-
-}
-
 class WorldMap extends Component {
     constructor(props) {
         super(props);
+        this.lastEventProcessed = -1;
     }
 
     componentDidMount() {
         this.initCanvas();
         this.updateCanvas();
-        this.props.game.subscribe(new WorldMapGameListener(this));
-        this.props.controls.forEach(c => c.worldmap(this));
+        this.props.store.subscribe(() => {
+            const state = this.props.store.getState();
+            // TODO find a more suitable way?
+            // there is no shadow dom here, thus one need to make the diff by ourself
+            this.drawCitySelection(state.city_selection);
+            this.updateLayersVisibility(state.layers);
+            this.processEvents(state.events);
+        });
     }
 
     componentDidUpdate() {
         this.updateCanvas();
     }
 
-    citySelected(city) {
-        this.props.controls.forEach(c => {
-            if (c.citySelected)
-                c.citySelected(city);
+    processEvents(events) {
+        let lastEvent = this.lastEventProcessed;
+        console.log("Processing events from ", lastEvent);
+        events.forEach(e => {
+            if(e.sequence <= lastEvent)
+                return;
+            lastEvent = e.sequence;
+            if(e.type === INFECTION_RECEIVED) {
+                this.onInfection(e.infection);
+            }
         });
-        this.drawCitySelection(city);
+
+        this.lastEventProcessed = lastEvent;
     }
 
-    cityInfected(city) {
+    onInfection(infection) {
+        const byGeneration = Fun.groupBy(infection.changes, c => c.generation);
+        const generations = Object.keys(byGeneration).sort((a, b) => a - b);
+        generations.forEach(g => {
+            setTimeout(() => this.applyInfectionGenerationChanges(byGeneration[g]), g * 6000);
+        });
+    }
+
+    applyInfectionGenerationChanges(changes) {
+        changes.forEach(c => {
+            if (c.type === "infected") {
+                this.onCityInfected(c.city);
+            }
+            else if (c.type === "outbreak") {
+                this.onCityOutbreak(c.city);
+            }
+        });
+    }
+
+    citySelected(city) {
+        this.props.store.dispatch(selectCity(city));
+    }
+
+    onCityInfected(city) {
         const node = this.props.cities.nodeOf(city);
         const svg = this.refs.svg;
         const s = Snap(svg);
@@ -115,7 +138,7 @@ class WorldMap extends Component {
         });
     }
 
-    cityOutbreak(city) {
+    onCityOutbreak(city) {
         const node = this.props.cities.nodeOf(city);
         const svg = this.refs.svg;
         const s = Snap(svg);
@@ -169,33 +192,42 @@ class WorldMap extends Component {
         const anims = s.g().attr({id: "g-anims"});
     }
 
-    toggleDisplay(layer) {
+    updateLayersVisibility(layers) {
+        Object.keys(layers).forEach(k => {
+            const layer = this.layerOf(k);
+            if(layer)
+                WorldMap.updateLayerVisibility(layer, layers[k]);
+        });
+    }
+
+    static updateLayerVisibility(layer, visibility) {
+        if(visibility) {
+            if(layer.hasClass("hidden"))
+                layer.removeClass("hidden");
+        }
+        else {
+            if(!layer.hasClass("hidden"))
+                layer.addClass("hidden");
+        }
+    }
+
+    layerOf(layer) {
         const svg = this.refs.svg;
         const s = Snap(svg);
-        if (layer === "background") {
-            const layer = s.select("g[id='g-background']");
-            layer.toggleClass("hidden");
-            return;
+        if (layer === Layer.BACKGROUND) {
+            return s.select("g[id='g-background']");
         }
-        if (layer === "cities") {
-            const layer = s.select("g[id='g-cities']");
-            layer.toggleClass("hidden");
-            return;
+        if (layer === Layer.CITIES) {
+            return s.select("g[id='g-cities']");
         }
-        if (layer === "cityNames") {
-            const layer = s.select("g[id='g-names']");
-            layer.toggleClass("hidden");
-            return;
+        if (layer === Layer.CITY_NAMES) {
+            return s.select("g[id='g-names']");
         }
-        if (layer === "cityHints") {
-            const layer = s.select("g[id='g-background']").select("g[id='layer3']");
-            layer.toggleClass("hidden");
-            return;
+        if (layer === Layer.CITY_HINTS) {
+            return s.select("g[id='g-background']").select("g[id='layer3']");
         }
-        if (layer === "links") {
-            const layer = s.select("g[id='g-links']");
-            layer.toggleClass("hidden");
-            return;
+        if (layer === Layer.LINKS) {
+            return s.select("g[id='g-links']");
         }
     }
 
@@ -248,19 +280,23 @@ class WorldMap extends Component {
         });
     }
 
-    drawCitySelection(city) {
-        const self = this;
+    drawCitySelection(cities) {
         const svg = this.refs.svg;
         const s = Snap(svg);
-        const cities = s.select("g[id='g-cities']");
-        const node = this.props.cities.nodeOf(city);
 
-        cities.selectAll("circle[id='selected']").forEach(n => n.remove());
-        cities.circle(node.cx, node.cy, 17)
-            .attr(Styles.city.selected)
-            .attr({
-                id: "selected"
-            });
+        // unselect previous one
+        const citiesLayer = s.select("g[id='g-cities']");
+        citiesLayer.selectAll("circle[class='selected']").forEach(n => n.remove());
+
+        // select if defined
+        cities.forEach(city => {
+            const node = this.props.cities.nodeOf(city);
+            citiesLayer.circle(node.cx, node.cy, 17)
+                .attr(Styles.city.selected)
+                .attr({
+                    class: "selected"
+                });
+        });
     }
 
     drawCityNames() {
