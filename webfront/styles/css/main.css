@@ -50,15 +50,15 @@ div.appbar-cities {
 
 div.appbar-city {
     border-left: 1px dotted #E89F5A;
-    padding-left: 5px;
+    padding: 0 5px;
 }
 
 div.appbar-city .name {
-    width: 90px;
+    /*width: 90px;*/
 }
 
 div.appbar-city .infectionLevel {
-    width: 15px;
+    /*width: 15px;*/
 }
 
 /**************************************
