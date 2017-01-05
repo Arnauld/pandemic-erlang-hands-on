@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import Snap from "snapsvg-cjs";
 import Fun from "../../util/fun";
 import Cities from "../cities";
-import Game, {GameListener} from "../game";
+import Game from "../game";
 import {selectCity, INFECTION_RECEIVED} from "../../actions";
 import BackgroundImg from "../../../styles/images/background.jpg";
 import BackgroundSvg from "../../../styles/images/worldmap.svg";
@@ -63,6 +63,12 @@ const Styles = {
     }
 };
 
+const SPECIAL_LINKS = [
+    ["san_francisco", "manila"],
+    ["san_francisco", "tokyo"],
+    ["los_angeles", "sydney"]];
+
+
 class WorldMap extends Component {
     constructor(props) {
         super(props);
@@ -90,10 +96,10 @@ class WorldMap extends Component {
         let lastEvent = this.lastEventProcessed;
         console.log("Processing events from ", lastEvent);
         events.forEach(e => {
-            if(e.sequence <= lastEvent)
+            if (e.sequence <= lastEvent)
                 return;
             lastEvent = e.sequence;
-            if(e.type === INFECTION_RECEIVED) {
+            if (e.type === INFECTION_RECEIVED) {
                 this.onInfection(e.infection);
             }
         });
@@ -110,6 +116,7 @@ class WorldMap extends Component {
     }
 
     applyInfectionGenerationChanges(changes) {
+        console.log("Apply infection generation changes", changes);
         changes.forEach(c => {
             if (c.type === "infected") {
                 this.onCityInfected(c.city);
@@ -177,6 +184,25 @@ class WorldMap extends Component {
         };
 
         setTimeout(() => anim(4), 3000);
+        setTimeout(() => {
+            const links = this.props.cities.linksOf(city);
+            links.forEach(other => {
+                const otherNode = this.props.cities.nodeOf(other);
+                this.traverseLinks(node, otherNode, ([x1, y1], [x2, y2]) => {
+                    const propagation = anims.circle(x1, y1, 10)
+                        .attr({"class":"propagation"})
+                        .attr({
+                            fill: "#9f1b33",
+                            stroke: "#9f1b33",
+                            strokeWidth: 1
+                        });
+                    propagation.animate({cx:x2, cy:y2}, 2000, () => {
+                        propagation.remove();
+                    });
+                    console.log("Draw anim from ", x1, y1, x2, y2);
+                });
+            });
+        }, 4000);
     }
 
     initCanvas() {
@@ -195,18 +221,18 @@ class WorldMap extends Component {
     updateLayersVisibility(layers) {
         Object.keys(layers).forEach(k => {
             const layer = this.layerOf(k);
-            if(layer)
+            if (layer)
                 WorldMap.updateLayerVisibility(layer, layers[k]);
         });
     }
 
     static updateLayerVisibility(layer, visibility) {
-        if(visibility) {
-            if(layer.hasClass("hidden"))
+        if (visibility) {
+            if (layer.hasClass("hidden"))
                 layer.removeClass("hidden");
         }
         else {
-            if(!layer.hasClass("hidden"))
+            if (!layer.hasClass("hidden"))
                 layer.addClass("hidden");
         }
     }
@@ -318,6 +344,24 @@ class WorldMap extends Component {
         });
     }
 
+    traverseLinks(node1, node2, callback) {
+        if (SPECIAL_LINKS.find(([city1, city2]) =>
+            (city1 === node1.name && city2 === node2.name) || (city2 === node1.name && city1 === node2.name))) {
+            if (node1.cx < node2.cx) {
+                // special cases
+                callback([node1.cx, node1.cy], [node2.cx - 1000, node2.cy]);
+                callback([node1.cx + 1000, node1.cy], [node2.cx, node2.cy]);
+            }
+            else {
+                callback([node1.cx - 1000, node1.cy], [node2.cx, node2.cy]);
+                callback([node1.cx, node1.cy], [node2.cx + 1000, node2.cy]);
+            }
+        }
+        else {
+            callback([node1.cx, node1.cy], [node2.cx, node2.cy]);
+        }
+    }
+
     drawLinks() {
         const svg = this.refs.svg;
         const s = Snap(svg);
@@ -332,38 +376,14 @@ class WorldMap extends Component {
             if (!node2)
                 console.error("Unknown city ", city2);
 
-            if ((link.includes("san_francisco") && link.includes("manila"))
-                || (link.includes("san_francisco") && link.includes("tokyo"))
-                || (link.includes("los_angeles") && link.includes("sydney"))) {
-
-            }
-            else {
-                links.polyline(node1.cx, node1.cy, node2.cx, node2.cy)
+            this.traverseLinks(node1, node2, ([x1, y1], [x2, y2]) => {
+                links.polyline(x1, y1, x2, y2)
                     .attr({
                         stroke: "#4d4d4d",
-                        strokeWidth: 2
+                        strokeWidth: 2,
+                        name: `${city1} - ${city2}`
                     });
-            }
-        });
-        const san_francisco = this.props.cities.nodeOf("san_francisco");
-        const manila = this.props.cities.nodeOf("manila");
-        const tokyo = this.props.cities.nodeOf("tokyo");
-        const los_angeles = this.props.cities.nodeOf("los_angeles");
-        const sydney = this.props.cities.nodeOf("sydney");
-        const specials = [[san_francisco, manila],
-            [san_francisco, tokyo],
-            [los_angeles, sydney]];
-        specials.forEach(([c1, c2]) => {
-            links.polyline(c1.cx, c1.cy, c2.cx - 1000, c2.cy)
-                .attr({
-                    stroke: "#4d4d4d",
-                    strokeWidth: 2
-                });
-            links.polyline(c1.cx + 1000, c1.cy, c2.cx, c2.cy)
-                .attr({
-                    stroke: "#4d4d4d",
-                    strokeWidth: 2
-                });
+            });
         });
     }
 
