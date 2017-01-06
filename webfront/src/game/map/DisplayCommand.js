@@ -6,7 +6,7 @@ import {toggleLayer} from "../../actions";
 class DisplayCommand extends Command {
 
     constructor(store) {
-        super("display", "adjust map's display");
+        super("toggleDisplay", "show/hide layer on map");
         this.store = store;
         this.subCommands = [Layer.LINKS, Layer.CITIES, Layer.CITY_HINTS, Layer.CITY_NAMES, Layer.BACKGROUND];
     }

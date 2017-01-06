@@ -78,14 +78,16 @@ class WorldMap extends Component {
     componentDidMount() {
         this.initCanvas();
         this.updateCanvas();
-        this.props.store.subscribe(() => {
-            const state = this.props.store.getState();
-            // TODO find a more suitable way?
-            // there is no shadow dom here, thus one need to make the diff by ourself
-            this.drawCitySelection(state.city_selection);
-            this.updateLayersVisibility(state.layers);
-            this.processEvents(state.events);
-        });
+        this.props.store.subscribe(() => this.updateFromStoreState());
+    }
+
+    updateFromStoreState() {
+        const state = this.props.store.getState();
+        // TODO find a more suitable way?
+        // there is no shadow dom here, thus one need to make the diff by ourself
+        this.drawCitySelection(state.city_selection);
+        this.updateLayersVisibility(state.layers);
+        this.processEvents(state.events);
     }
 
     componentDidUpdate() {
@@ -262,6 +264,7 @@ class WorldMap extends Component {
         this.drawCities();
         this.drawCityNames();
         this.drawLinks();
+        this.updateFromStoreState();
     }
 
     drawBackground() {

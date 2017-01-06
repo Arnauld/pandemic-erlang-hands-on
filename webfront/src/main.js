@@ -15,7 +15,7 @@ import Main from "../styles/css/main.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import AppBar from "./AppBar.jsx";
-import WorldMap from "./game/map/worldmap.jsx";
+import WorldMap from "./game/map/Worldmap.jsx";
 import Terminal from "./bash/terminal.jsx";
 import Cities from "./game/cities.js";
 import Game, {GameListener} from "./game/game.js";

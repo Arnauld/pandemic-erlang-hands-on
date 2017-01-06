@@ -6,7 +6,7 @@ import {
     CITY_STATES_INITIALIZED,
     CITY_STATE_UPDATED
 } from "./actions";
-import {INITIAL_LAYERS} from "./game/map/worldmap.jsx";
+import {INITIAL_LAYERS} from "./game/map/Worldmap.jsx";
 
 const initialState = {
     city_selection: [],
@@ -39,8 +39,7 @@ function pandemicApp(state = initialState, action) {
         }
 
         case CITY_STATES_INITIALIZED: {
-            let newState = Object.assign({}, state, {cityStates: action.cityStates});
-            return newState;
+            return Object.assign({}, state, {cityStates: action.cityStates});
         }
 
         case CITY_STATE_UPDATED: {
