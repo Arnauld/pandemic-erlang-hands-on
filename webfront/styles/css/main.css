@@ -71,6 +71,15 @@ div.appbar-city .infectionLevel {
     overflow: scroll;
 }
 
+.terminal textarea,
+.terminal textarea:focus {
+    outline: none;
+    resize: none;
+    background: none;
+    border: none;
+    flex-grow: 1;
+    padding: 0;
+}
 .terminal input:focus {
     outline: none;
 }

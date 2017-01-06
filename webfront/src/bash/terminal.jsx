@@ -7,6 +7,7 @@ const C_CHAR_CODE = 67;
 const UP_CHAR_CODE = 38;
 const DOWN_CHAR_CODE = 40;
 const TAB_CHAR_CODE = 9;
+const ENTER_CHAR_CODE = 13;
 
 class Terminal extends Component {
 
@@ -15,6 +16,12 @@ class Terminal extends Component {
         this.ctrlPressed = false;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.handleInput = this.handleInput.bind(this);
+    }
+
+    componentDidMount() {
+        const scrollHeight = this.refs.input.scrollHeight;
+        this.setState({style: {height: `${scrollHeight}px; overflow-y:hidden`}});
     }
 
     /*
@@ -40,6 +47,13 @@ class Terminal extends Component {
         }
     }
 
+
+    handleInput() {
+        this.refs.input.style.height = 'auto';
+        this.refs.input.style.height = (this.refs.input.scrollHeight) + 'px';
+    }
+
+
     /*
      * Handle keydown for special hot keys. The tab key
      * has to be handled on key down to prevent default.
@@ -52,6 +66,8 @@ class Terminal extends Component {
             // Tab must be on keydown to prevent default
             this.attemptAutocomplete();
             evt.preventDefault();
+        } else if (evt.which === ENTER_CHAR_CODE) {
+            this.handleSubmit(evt);
         }
     }
 
@@ -98,7 +114,7 @@ class Terminal extends Component {
         evt.preventDefault();
 
         // Execute command
-        const input = evt.target[0].value;
+        const input = this.refs.input.value;
         const bash = this.props.bash;
 
         const newState = bash.execute(input, this.state);
@@ -137,12 +153,20 @@ class Terminal extends Component {
                 {history.map(this.renderHistoryItem(this.prefix()))}
                 <form onSubmit={evt => this.handleSubmit(evt)}>
                     {this.prefix()}
-                    <input
+                    <textarea
                         autoComplete="off"
                         onKeyDown={this.handleKeyDown}
                         onKeyUp={this.handleKeyUp}
+                        onInput={this.handleInput}
                         ref="input"
+                        style={(this.state || {}).style || {}}
                     />
+                    {/*<input*/}
+                    {/*autoComplete="off"*/}
+                    {/*onKeyDown={this.handleKeyDown}*/}
+                    {/*onKeyUp={this.handleKeyUp}*/}
+                    {/*ref="input"*/}
+                    {/*/>*/}
                 </form>
             </div>
         );
