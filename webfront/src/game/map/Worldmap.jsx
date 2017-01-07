@@ -17,7 +17,7 @@ export const Layer = {
 };
 export const DEFAULT_LAYERS = [Layer.BACKGROUND, Layer.CITIES, Layer.CITY_NAMES, Layer.CITY_HINTS, Layer.LINKS];
 export const INITIAL_LAYERS = DEFAULT_LAYERS.reduce((acc, l) => {
-    acc[l] = true;
+    acc[l] = (l !== Layer.CITY_HINTS);
     return acc
 }, {});
 
@@ -27,12 +27,20 @@ const Styles = {
         stroke: "#9f1b33",
         strokeWidth: 10
     },
+    outbreakPropagation: {
+        fill: "#9f1b33",
+        stroke: "#9f1b33",
+        strokeWidth: 1
+    },
     infection: {
         fill: "none",
         stroke: "#E89F5A",
         strokeWidth: 5
     },
     city: {
+        hints: {
+            stroke: "#eee"
+        },
         selected: {
             fill: "none",
             stroke: "#E89F5A",
@@ -60,6 +68,26 @@ const Styles = {
             "fill": "#6b6b6b",
             "font-size": "12px"
         }
+    },
+    links: {
+        disabled0: {
+            stroke: "#8D584C",
+            strokeWidth: 1,
+
+        },
+        disabled1: {
+            stroke: "#8D584C",
+            strokeWidth: 1,
+            strokeDasharray: "2px",
+            strokeDashoffset: "5px",
+
+        },
+        disabled2: {
+            stroke: "#4d4d4d",
+            strokeWidth: 1,
+            strokeDasharray: "2px",
+            strokeDashoffset: "5px",
+        }
     }
 };
 
@@ -85,6 +113,7 @@ class WorldMap extends Component {
         const state = this.props.store.getState();
         // TODO find a more suitable way?
         // there is no shadow dom here, thus one need to make the diff by ourself
+        this.updateCitiesStates();
         this.drawCitySelection(state.city_selection);
         this.updateLayersVisibility(state.layers);
         this.processEvents(state.events);
@@ -192,13 +221,9 @@ class WorldMap extends Component {
                 const otherNode = this.props.cities.nodeOf(other);
                 this.traverseLinks(node, otherNode, ([x1, y1], [x2, y2]) => {
                     const propagation = anims.circle(x1, y1, 10)
-                        .attr({"class":"propagation"})
-                        .attr({
-                            fill: "#9f1b33",
-                            stroke: "#9f1b33",
-                            strokeWidth: 1
-                        });
-                    propagation.animate({cx:x2, cy:y2}, 2000, () => {
+                        .attr({"class": "propagation"})
+                        .attr(Styles.outbreakPropagation);
+                    propagation.animate({cx: x2, cy: y2}, 2000, () => {
                         propagation.remove();
                     });
                     console.log("Draw anim from ", x1, y1, x2, y2);
@@ -283,8 +308,26 @@ class WorldMap extends Component {
 
             const g2 = f.select("g[id='layer3']");
             g2.attr({"transform": "matrix(1.105,0,0,1.105,-120,-90)"});
-            g2.selectAll("path").forEach(n => n.attr({stroke: "#eee"}));
+            g2.selectAll("path").forEach(n => n.attr(Styles.city.hints));
             background.add(g2);
+        });
+    }
+
+    updateCitiesStates() {
+        const svg = this.refs.svg;
+        const s = Snap(svg);
+        const cities = s.select("g[id='g-cities']");
+
+        this.props.cities.nodes.forEach(node => {
+            const disabled = this.props.cities.stateOf(node.name).disabled;
+            const circle = cities.select("circle[id='" + node.id + "']");
+            console.log("" + node.name + ": " + disabled + ", circle: ", circle, circle.attr("disabled"));
+            if (circle.attr("disabled") !== disabled) {
+                circle.attr(disabled ? Styles.city.disabled : Styles.city.active)
+                    .attr({
+                        disabled: disabled
+                    });
+            }
         });
     }
 
@@ -299,6 +342,7 @@ class WorldMap extends Component {
             const newCity = cities.circle(node.cx, node.cy, 10)
                 .attr(disabled ? Styles.city.disabled : Styles.city.active)
                 .attr({
+                    disabled: disabled,
                     id: node.id,
                     name: node.name,
                     tx: node.tx,
@@ -379,13 +423,16 @@ class WorldMap extends Component {
             if (!node2)
                 console.error("Unknown city ", city2);
 
+            let disabledCount = 0;
+            if (this.props.cities.stateOf(city1).disabled)
+                disabledCount++;
+            if (this.props.cities.stateOf(city2).disabled)
+                disabledCount++;
+
             this.traverseLinks(node1, node2, ([x1, y1], [x2, y2]) => {
                 links.polyline(x1, y1, x2, y2)
-                    .attr({
-                        stroke: "#4d4d4d",
-                        strokeWidth: 2,
-                        name: `${city1} - ${city2}`
-                    });
+                    .attr({name: `${city1} - ${city2}`})
+                    .attr(Styles.links[`disabled${disabledCount}`]);
             });
         });
     }

@@ -3,6 +3,7 @@
  */
 export const CITY_SELECTED = "city-selected";
 export const CITIES_SELECTED = "cities-selected";
+export const CITIES_STATE_TOGGLED = "cities-state_toggled";
 export const LAYER_TOGGLED = "display-layer";
 export const INFECTION_RECEIVED = "infection-received";
 export const CITY_STATES_INITIALIZED = "city-states-initialized";
@@ -17,6 +18,10 @@ export function selectCity(city) {
 
 export function selectCities(cities) {
     return {type: CITIES_SELECTED, cities}
+}
+
+export function toggleCities(cities) {
+    return {type: CITIES_STATE_TOGGLED, cities}
 }
 
 export function toggleLayer(layer) {

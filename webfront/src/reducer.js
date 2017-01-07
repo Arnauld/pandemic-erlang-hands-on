@@ -1,6 +1,7 @@
 import {
     CITY_SELECTED,
     CITIES_SELECTED,
+    CITIES_STATE_TOGGLED,
     LAYER_TOGGLED,
     INFECTION_RECEIVED,
     CITY_STATES_INITIALIZED,
@@ -40,6 +41,20 @@ function pandemicApp(state = initialState, action) {
 
         case CITY_STATES_INITIALIZED: {
             return Object.assign({}, state, {cityStates: action.cityStates});
+        }
+
+        case CITIES_STATE_TOGGLED: {
+            console.log("CITIES_STATE_TOGGLED - cities:", action.cities);
+            const newStates = action.cities.reduce((acc, city) => {
+                const oldState = state.cityStates[city];
+                acc[city] = Object.assign({}, oldState, {disabled: !oldState.disabled});
+                return acc;
+            }, Object.assign({}, state.cityStates));
+
+
+            let newState = Object.assign({}, state, {cityStates: newStates});
+            console.log("CITIES_STATE_TOGGLED - newState: ", newState);
+            return newState;
         }
 
         case CITY_STATE_UPDATED: {

@@ -23,6 +23,7 @@ import Bash from "./bash/bash.js";
 import InfectCommand from "./game/command/InfectCommand.js";
 import SelectCommand from "./game/command/SelectCommand.js";
 import EventsCommand from "./game/command/EventsCommand.js";
+import ToggleCityCommand from "./game/command/ToggleCityCommand.js";
 import ClearCommand from "./bash/command/ClearCommand.js";
 import DisplayCommand from "./game/map/DisplayCommand";
 //-
@@ -55,6 +56,7 @@ const commands = [
     new EventsCommand(),
     new ClearCommand(),
     new SelectCommand(store, cities),
+    new ToggleCityCommand(store, cities),
     worldMapCommand
 ];
 const bash = new Bash(commands, ["Welcome! try 'help'"]);
