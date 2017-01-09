@@ -44,10 +44,14 @@ class Cities {
         this.store.dispatch(updateCityState(city, newState));
     }
 
-    linksOf(city) {
+    linksWith(city) {
         return data
             .links
-            .filter(([c1, c2]) => c1 === city || c2 === city)
+            .filter(([c1, c2]) => c1 === city || c2 === city);
+    }
+
+    citiesLinkedTo(city) {
+        return this.linksWith(city)
             .map(([c1, c2]) => c1 === city ? c2 : c1);
     }
 

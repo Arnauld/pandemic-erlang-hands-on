@@ -31,7 +31,7 @@ class Game {
         else if (!outbreak.includes(city)) {
             outbreak.push(city);
             changes.push({type: "outbreak", city: city, generation: generation});
-            const links = this.cities.linksOf(city);
+            const links = this.cities.citiesLinkedTo(city);
             links.forEach(l => toInfect.push([l, generation + 1, city]));
         }
         return this.recursiveInfect(infection);

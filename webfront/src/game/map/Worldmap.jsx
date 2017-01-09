@@ -216,7 +216,7 @@ class WorldMap extends Component {
 
         setTimeout(() => anim(4), 3000);
         setTimeout(() => {
-            const links = this.props.cities.linksOf(city);
+            const links = this.props.cities.citiesLinkedTo(city);
             links.forEach(other => {
                 const otherNode = this.props.cities.nodeOf(other);
                 this.traverseLinks(node, otherNode, ([x1, y1], [x2, y2]) => {
@@ -317,16 +317,23 @@ class WorldMap extends Component {
         const svg = this.refs.svg;
         const s = Snap(svg);
         const cities = s.select("g[id='g-cities']");
+        const names = s.select("g[id='g-names']");
 
         this.props.cities.nodes.forEach(node => {
-            const disabled = this.props.cities.stateOf(node.name).disabled;
+            const city = node.name;
+            const disabled = this.props.cities.stateOf(city).disabled;
             const circle = cities.select("circle[id='" + node.id + "']");
-            console.log("" + node.name + ": " + disabled + ", circle: ", circle, circle.attr("disabled"));
+            console.log("" + city + ": " + disabled + ", circle: ", circle, circle.attr("disabled"));
             if (circle.attr("disabled") !== disabled) {
                 circle.attr(disabled ? Styles.city.disabled : Styles.city.active)
                     .attr({
                         disabled: disabled
                     });
+
+                names.select("text[id='" + node.id + "-text']")
+                    .attr(disabled ? Styles.text.disabled : Styles.text.active);
+
+                this.drawLinks(this.props.cities.linksWith(city))
             }
         });
     }
@@ -409,12 +416,12 @@ class WorldMap extends Component {
         }
     }
 
-    drawLinks() {
+    drawLinks(linksToDraw) {
         const svg = this.refs.svg;
         const s = Snap(svg);
         const links = s.select("g[id='g-links']");
 
-        this.props.cities.links.forEach(link => {
+        (linksToDraw || this.props.cities.links).forEach(link => {
             const [city1, city2] = link;
             const node1 = this.props.cities.nodeOf(city1);
             const node2 = this.props.cities.nodeOf(city2);
