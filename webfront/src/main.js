@@ -24,6 +24,7 @@ import InfectCommand from "./game/command/InfectCommand.js";
 import SelectCommand from "./game/command/SelectCommand.js";
 import EventsCommand from "./game/command/EventsCommand.js";
 import ToggleCityCommand from "./game/command/ToggleCityCommand.js";
+import StateOfCityCommand from "./game/command/StateOfCityCommand.js";
 import ClearCommand from "./bash/command/ClearCommand.js";
 import DisplayCommand from "./game/map/DisplayCommand";
 //-
@@ -57,7 +58,8 @@ const commands = [
     new ClearCommand(),
     new SelectCommand(store, cities),
     new ToggleCityCommand(store, cities),
-    worldMapCommand
+    worldMapCommand,
+    new StateOfCityCommand(store, cities)
 ];
 const bash = new Bash(commands, ["Welcome! try 'help'"]);
 

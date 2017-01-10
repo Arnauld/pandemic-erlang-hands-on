@@ -1,5 +1,6 @@
 import Command from "../../bash/Command";
 import Fun from "../../util/fun";
+import Strings from "../../util/strings";
 import {Layer} from "./Worldmap.jsx";
 import {toggleLayer} from "../../actions";
 
@@ -31,6 +32,11 @@ class DisplayCommand extends Command {
                 potentials.forEach(n => {
                     outs.writeMessage(n);
                 });
+
+                const prefix = Strings.longestCommonPrefix(potentials);
+                if(prefix) {
+                    return command + " " + prefix;
+                }
             }
         }
         return super.autocomplete(input, command, args);

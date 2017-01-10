@@ -72,21 +72,22 @@ const Styles = {
     links: {
         disabled0: {
             stroke: "#8D584C",
-            strokeWidth: 1,
+            strokeWidth: 2,
+            strokeDasharray: null,
+            strokeDashoffset: null
 
         },
         disabled1: {
             stroke: "#8D584C",
             strokeWidth: 1,
             strokeDasharray: "2px",
-            strokeDashoffset: "5px",
-
+            strokeDashoffset: "5px"
         },
         disabled2: {
             stroke: "#4d4d4d",
             strokeWidth: 1,
             strokeDasharray: "2px",
-            strokeDashoffset: "5px",
+            strokeDashoffset: "5px"
         }
     }
 };
@@ -226,7 +227,7 @@ class WorldMap extends Component {
                     propagation.animate({cx: x2, cy: y2}, 2000, () => {
                         propagation.remove();
                     });
-                    console.log("Draw anim from ", x1, y1, x2, y2);
+                    // console.log("Draw anim from ", x1, y1, x2, y2);
                 });
             });
         }, 4000);
@@ -285,10 +286,11 @@ class WorldMap extends Component {
     }
 
     updateCanvas() {
+        console.error("Updating canvas...");
         this.drawBackground();
         this.drawCities();
         this.drawCityNames();
-        this.drawLinks();
+        this.drawLinks(this.props.cities.links);
         this.updateFromStoreState();
     }
 
@@ -323,8 +325,10 @@ class WorldMap extends Component {
             const city = node.name;
             const disabled = this.props.cities.stateOf(city).disabled;
             const circle = cities.select("circle[id='" + node.id + "']");
-            console.log("" + city + ": " + disabled + ", circle: ", circle, circle.attr("disabled"));
-            if (circle.attr("disabled") !== disabled) {
+            // console.log("" + city + ": " + disabled + ", circle: ", circle, circle.attr("disabled"));
+            const actual = circle.attr("disabled") === "true";
+            if (actual !== disabled) {
+                console.warn("disabled not equal", typeof actual, actual, typeof disabled, disabled);
                 circle.attr(disabled ? Styles.city.disabled : Styles.city.active)
                     .attr({
                         disabled: disabled
@@ -421,6 +425,8 @@ class WorldMap extends Component {
         const s = Snap(svg);
         const links = s.select("g[id='g-links']");
 
+        console.error("About to redraw links: ", linksToDraw);
+
         (linksToDraw || this.props.cities.links).forEach(link => {
             const [city1, city2] = link;
             const node1 = this.props.cities.nodeOf(city1);
@@ -431,15 +437,22 @@ class WorldMap extends Component {
                 console.error("Unknown city ", city2);
 
             let disabledCount = 0;
-            if (this.props.cities.stateOf(city1).disabled)
+            let state1 = this.props.cities.stateOf(city1);
+            if (state1.disabled)
                 disabledCount++;
-            if (this.props.cities.stateOf(city2).disabled)
+
+            let state2 = this.props.cities.stateOf(city2);
+            if (state2.disabled)
                 disabledCount++;
 
             this.traverseLinks(node1, node2, ([x1, y1], [x2, y2]) => {
-                links.polyline(x1, y1, x2, y2)
-                    .attr({name: `${city1} - ${city2}`})
-                    .attr(Styles.links[`disabled${disabledCount}`]);
+                const id = `${city1}_${city2}`;
+                let link = links.select("polyline[id='" + id + "']");
+                if (!link) {
+                    link = links.polyline(x1, y1, x2, y2)
+                        .attr({id: id});
+                }
+                link.attr(Styles.links[`disabled${disabledCount}`]);
             });
         });
     }

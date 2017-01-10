@@ -1,5 +1,6 @@
 import HelpCommand from "./command/HelpCommand";
 import Out from "./Out";
+import Strings from "./../util/strings";
 
 class Bash {
 
@@ -37,6 +38,10 @@ class Bash {
         if (potentials.length > 1) {
             this.outs.writeCommand(input);
             potentials.forEach(n => this.outs.writeMessage(n.command));
+
+            const prefix = Strings.longestCommonPrefix(potentials.map(p => p.command));
+            if (prefix)
+                return prefix;
             return input;
         }
         return null;

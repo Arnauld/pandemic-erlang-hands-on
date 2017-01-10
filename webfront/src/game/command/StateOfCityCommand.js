@@ -1,12 +1,12 @@
 import Command from "../../bash/Command";
 import Fun from "../../util/fun";
 import Strings from "../../util/strings";
-import {toggleCities} from "../../actions";
+import {stateOfCity} from "../../actions";
 
-class ToggleCityCommand extends Command {
+class StateOfCityCommand extends Command {
 
     constructor(store, cities) {
-        super("toggleCity", "toggle city state between enabled/disabled");
+        super("stateOf", "display city state");
         this.store = store;
         this.cities = cities;
     }
@@ -43,8 +43,11 @@ class ToggleCityCommand extends Command {
 
 
     execute(command, args, outs) {
-        this.store.dispatch(toggleCities(args));
+        args.forEach(city => {
+            let state = this.cities.stateOf(city);
+            outs.writeMessage(JSON.stringify(state));
+        });
     }
 }
 
-export default ToggleCityCommand
+export default StateOfCityCommand
