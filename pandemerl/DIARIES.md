@@ -35,3 +35,26 @@ Add cowboy in the list of application in `pandemerl.app.src`
    ]},
 ```
 
+# Registry
+
+Terminal 1
+
+```
+$ rebar3 do clean, compile, shell --sname term1
+...
+Erlang/OTP 19 [erts-8.1] [source] [64-bit] [smp:4:4] [async-threads:0] [hipe] [kernel-poll:false]
+
+Eshell V8.1  (abort with ^G)
+(term1@Mentem)1> registry_srv:start_link().
+```
+
+Terminal 2
+
+```
+$ rebar3 do shell --sname term2
+...
+Erlang/OTP 19 [erts-8.1] [source] [64-bit] [smp:4:4] [async-threads:0] [hipe] [kernel-poll:false]
+
+Eshell V8.1  (abort with ^G)
+(term2@Mentem)1> net_kernel:connect_node('term1@Mentem').
+```
