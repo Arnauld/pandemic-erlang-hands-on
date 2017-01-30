@@ -27,7 +27,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, register_local/1, get_locals/0, synchronize_locals/0, get_remotes/0]).
+-export([start_link/0, register/1, get_locals/0, synchronize_locals/0, get_remotes/0]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -53,7 +53,7 @@
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-register_local({Type, Name}) ->
+register({Type, Name}) ->
   gen_server:call(?SERVER, {register, Type, Name}).
 
 get_locals() ->
@@ -64,15 +64,6 @@ get_remotes() ->
 
 synchronize_locals() ->
   gen_server:cast(?SERVER, synchronize_locals).
-
-schedule_check_pending_nodes() ->
-  spawn(fun() ->
-    timer:sleep(5 * 1000),
-    check_pending_nodes()
-        end).
-
-check_pending_nodes() ->
-  gen_server:cast(?SERVER, check_pending_nodes).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -143,6 +134,15 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
+
+schedule_check_pending_nodes() ->
+  spawn(fun() ->
+    timer:sleep(5 * 1000),
+    check_pending_nodes()
+        end).
+
+check_pending_nodes() ->
+  gen_server:cast(?SERVER, check_pending_nodes).
 
 update_node_locals(State, Node, NodeLocals) ->
   #state{remotes = Remotes, pending_nodes = PendingNodes} = State,
