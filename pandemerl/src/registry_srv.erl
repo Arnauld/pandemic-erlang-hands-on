@@ -27,7 +27,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, register_local/1, get_locals/0, synchronize_locals/0]).
+-export([start_link/0, register_local/1, get_locals/0, synchronize_locals/0, get_remotes/0]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -43,7 +43,7 @@
 
 -record(state, {
   locals = [],
-  nodes = [],
+  remotes = [],
   pending_nodes = []
 }).
 
@@ -58,6 +58,9 @@ register_local({Type, Name}) ->
 
 get_locals() ->
   gen_server:call(?SERVER, get_locals).
+
+get_remotes() ->
+  gen_server:call(?SERVER, get_remotes).
 
 synchronize_locals() ->
   gen_server:cast(?SERVER, synchronize_locals).
@@ -81,8 +84,10 @@ init([]) ->
 
 handle_call(get_locals, _From, State) ->
   {reply, State#state.locals, State};
+handle_call(get_remotes, _From, State) ->
+  {reply, State#state.remotes, State};
 handle_call({register, Type, Name}, _From, State) ->
-  NewLocals = [{Type, Name}, State#state.locals],
+  NewLocals = [{Type, Name} | State#state.locals],
   NewState = State#state{locals = NewLocals},
   {reply, ok, NewState};
 handle_call(_Request, _From, State) ->
@@ -140,31 +145,31 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 update_node_locals(State, Node, NodeLocals) ->
-  #state{nodes = Nodes, pending_nodes = PendingNodes} = State,
-  NewNodes0 = discard_locals_of_node(Node, Nodes),
-  NewNodes1 = append_locals_of_node(Node, NodeLocals, NewNodes0),
+  #state{remotes = Remotes, pending_nodes = PendingNodes} = State,
+  NewRemotes0 = discard_remotes(Node, Remotes),
+  NewRemotes1 = append_remotes(Node, NodeLocals, NewRemotes0),
   NewPendingNodes = remove_node(PendingNodes, Node),
-  State#state{nodes = NewNodes1, pending_nodes = NewPendingNodes}.
+  State#state{remotes = NewRemotes1, pending_nodes = NewPendingNodes}.
 
-remove_locals_of_node(State = #state{nodes = NodesLocals, pending_nodes = PendingNodes}, NodeToDiscard) ->
-  NewNodesLocals = discard_locals_of_node(NodeToDiscard, NodesLocals),
+remove_locals_of_node(State = #state{remotes = Remotes, pending_nodes = PendingNodes}, NodeToDiscard) ->
+  NewRemotes = discard_remotes(NodeToDiscard, Remotes),
   NewPendingNodes = remove_node(PendingNodes, NodeToDiscard),
-  State#state{nodes = NewNodesLocals, pending_nodes = NewPendingNodes}.
+  State#state{remotes = NewRemotes, pending_nodes = NewPendingNodes}.
 
-discard_locals_of_node(NodeToDiscard, NodesLocals) ->
-  discard_locals_of_node(NodeToDiscard, NodesLocals, []).
+discard_remotes(NodeToDiscard, NodesLocals) ->
+  discard_remotes(NodeToDiscard, NodesLocals, []).
 
-discard_locals_of_node(_NodeToDiscard, [], Acc) -> Acc;
-discard_locals_of_node(NodeToDiscard, [{NodeToDiscard, _} | Others], Acc) ->
-  discard_locals_of_node(NodeToDiscard, Others, Acc);
-discard_locals_of_node(NodeToDiscard, [NodeLocal | Others], Acc) ->
-  discard_locals_of_node(NodeToDiscard, Others, [NodeLocal | Acc]).
+discard_remotes(_NodeToDiscard, [], Acc) -> Acc;
+discard_remotes(NodeToDiscard, [{NodeToDiscard, _} | Others], Acc) ->
+  discard_remotes(NodeToDiscard, Others, Acc);
+discard_remotes(NodeToDiscard, [NodeLocal | Others], Acc) ->
+  discard_remotes(NodeToDiscard, Others, [NodeLocal | Acc]).
 
 
 
-append_locals_of_node(_Node, [], Acc) -> Acc;
-append_locals_of_node(Node, [NodeLocal | Others], Acc) ->
-  append_locals_of_node(Node, Others, [{Node, NodeLocal} | Acc]).
+append_remotes(_Node, [], Acc) -> Acc;
+append_remotes(Node, [NodeLocal | Others], Acc) ->
+  append_remotes(Node, Others, [{Node, NodeLocal} | Acc]).
 
 broadcast_fetch_locals(#state{locals = Locals, pending_nodes = Nodes}) ->
   case Nodes of
