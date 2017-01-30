@@ -27,7 +27,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, register/1, get_locals/0, synchronize_locals/0, get_remotes/0]).
+-export([start_link/0, register/1, get_locals/0, synchronize_locals/0, get_remotes/0, lookup_node/1]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -65,6 +65,10 @@ get_remotes() ->
 synchronize_locals() ->
   gen_server:cast(?SERVER, synchronize_locals).
 
+lookup_node({Type, Name}) ->
+  gen_server:call(?SERVER, {lookup_node, Type, Name}).
+
+
 %%%===================================================================
 %%% gen_server callbacks
 %%%===================================================================
@@ -78,9 +82,22 @@ handle_call(get_locals, _From, State) ->
 handle_call(get_remotes, _From, State) ->
   {reply, State#state.remotes, State};
 handle_call({register, Type, Name}, _From, State) ->
-  NewLocals = [{Type, Name} | State#state.locals],
+  NewLocals = [{Type, Name, no_data} | State#state.locals],
   NewState = State#state{locals = NewLocals},
   {reply, ok, NewState};
+handle_call({lookup_node, Type, Name}, _From, State) ->
+  Response = case lookup_locals(State#state.locals, Type, Name) of
+               {ok, _Data} ->
+                 {ok, local};
+               _ ->
+                 case lookup_remote(State#state.remotes, Type, Name) of
+                   {ok, Node, _Data} ->
+                     {ok, remote, Node};
+                   _ ->
+                     not_found
+                 end
+             end,
+  {reply, Response, State};
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
@@ -202,3 +219,13 @@ remove_node([Node | Others], Node, Acc) ->
   remove_node(Others, Node, Acc);
 remove_node([Other | Others], Node, Acc) ->
   remove_node(Others, Node, [Other | Acc]).
+
+lookup_locals([], _Type, _Name) -> not_found;
+lookup_locals([{Type, Name, Data} | _Others], Type, Name) -> {ok, Data};
+lookup_locals([_Other | Others], Type, Name) ->
+  lookup_locals(Others, Type, Name).
+
+lookup_remote([], _Type, _Name) -> not_found;
+lookup_remote([{Node, {Type, Name, Data}} | _Others], Type, Name) -> {ok, Node, Data};
+lookup_remote([_Other | Others], Type, Name) ->
+  lookup_remote(Others, Type, Name).
