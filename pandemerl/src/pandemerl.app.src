@@ -1,17 +1,19 @@
 {application, pandemerl,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {mod, { pandemerl_app, []}},
-  {applications,
-   [kernel,
-    stdlib,
-    cowboy
-   ]},
-  {env, [{http_port, 8080}]},
-  {modules, []},
+  [{description, "An OTP application"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {mod, {pandemerl_app, []}},
+    {applications,
+      [kernel,
+        stdlib,
+        cowboy
+      ]},
+    {env, [
+      {http_port, 8080},
+      {static_dir, "/Users/Arnauld/Projects/pandemic-erlang-hands-on/webfront/build"}]},
+    {modules, []},
 
-  {maintainers, []},
-  {licenses, []},
-  {links, []}
- ]}.
+    {maintainers, []},
+    {licenses, []},
+    {links, []}
+  ]}.
