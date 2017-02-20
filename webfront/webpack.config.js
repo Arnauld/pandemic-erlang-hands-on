@@ -12,6 +12,7 @@ module.exports = {
     entry: path.resolve(dir_js, 'main.js'),
     output: {
         path: dir_build,
+        publicPath: "/assets/",
         filename: 'bundle.js'
     },
     devServer: {
