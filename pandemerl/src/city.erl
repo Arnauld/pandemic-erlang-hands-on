@@ -19,7 +19,8 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 new(City) ->
-  {City, []}.
+  CityState = {City, []},
+  {ok, CityState}.
 
 name_of(City) ->
   {Name, _Levels} = City,
@@ -40,7 +41,8 @@ infect(City, Disease) ->
   Level = find_infection_level(Levels, Disease, 0),
   NewLevel = Level + 1,
   NewLevels = set_infection_level(Levels, Disease, NewLevel),
-  {Name, NewLevels}.
+  NewCity = {Name, NewLevels},
+  {ok, NewCity}.
 
 set_infection_level(Levels, Disease, NewLevel) ->
   set_infection_level(Levels, Disease, NewLevel, []).
