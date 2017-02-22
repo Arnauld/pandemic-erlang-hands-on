@@ -13,7 +13,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([new/1, name_of/1, infection_level/2]).
+-export([new/1, name_of/1, infection_level/2, infect/2]).
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
@@ -34,3 +34,18 @@ find_infection_level([], _, DefaultValue) -> DefaultValue;
 find_infection_level([{Disease, Level} | _], Disease, _) -> Level;
 find_infection_level([_ | OtherLevels], Disease, DefaultValue) ->
   find_infection_level(OtherLevels, Disease, DefaultValue).
+
+infect(City, Disease) ->
+  {Name, Levels} = City,
+  Level = find_infection_level(Levels, Disease, 0),
+  NewLevel = Level + 1,
+  NewLevels = set_infection_level(Levels, Disease, NewLevel),
+  {Name, NewLevels}.
+
+set_infection_level(Levels, Disease, NewLevel) ->
+  set_infection_level(Levels, Disease, NewLevel, []).
+
+set_infection_level([], Disease, NewLevel, Acc) -> [{Disease, NewLevel} | Acc];
+set_infection_level([{Disease, Level} | Others], Disease, NewLevel, Acc) -> [{Disease, NewLevel} | Acc] ++ Others;
+set_infection_level([Other | Others], Disease, NewLevel, Acc) ->
+  set_infection_level(Others, Disease, NewLevel, [Other | Acc]).
