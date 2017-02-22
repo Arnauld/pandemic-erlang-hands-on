@@ -39,10 +39,16 @@ find_infection_level([_ | OtherLevels], Disease, DefaultValue) ->
 infect(City, Disease) ->
   {Name, Levels} = City,
   Level = find_infection_level(Levels, Disease, 0),
-  NewLevel = Level + 1,
-  NewLevels = set_infection_level(Levels, Disease, NewLevel),
-  NewCity = {Name, NewLevels},
-  {ok, NewCity}.
+  case Level of
+    3 ->
+      outbreak;
+
+    _ ->
+      NewLevel = Level + 1,
+      NewLevels = set_infection_level(Levels, Disease, NewLevel),
+      NewCity = {Name, NewLevels},
+      {ok, NewCity}
+  end.
 
 set_infection_level(Levels, Disease, NewLevel) ->
   set_infection_level(Levels, Disease, NewLevel, []).
