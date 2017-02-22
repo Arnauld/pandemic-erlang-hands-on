@@ -15,6 +15,10 @@ should_be_able_to_create_a_city__test() ->
   City = city:new(london),
   ?assertEqual(london, city:name_of(City)).
 
+should_not_be_infected_by_default__test() ->
+  City = city:new(london),
+  ?assertEqual(0, city:infection_level(City, blue)).
+
 should_increase_infection_level_when_infected__test() ->
   City0 = city:new(london),
   City1 = city:infect(City0, blue),

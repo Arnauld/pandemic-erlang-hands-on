@@ -13,14 +13,22 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([new/1, name_of/1]).
+-export([new/1, name_of/1, infection_level/2]).
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
 %% ------------------------------------------------------------------
 new(City) ->
-  {City}.
+  {City, []}.
 
 name_of(City) ->
-  {Name} = City,
+  {Name, _Levels} = City,
   Name.
+
+infection_level(City, Disease) ->
+  {_Name, Levels} = City,
+  Level = find_infection_level(Levels, Disease, 0),
+  Level.
+
+find_infection_level(Levels, Disease, DefaultValue) ->
+  erlang:error(not_implemented).
