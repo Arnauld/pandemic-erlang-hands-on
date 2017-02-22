@@ -31,4 +31,11 @@ infection_level(City, Disease) ->
   Level.
 
 find_infection_level(Levels, Disease, DefaultValue) ->
-  erlang:error(not_implemented).
+  [{ADisease, Level} | OtherLevels ] = Levels,
+  case ADisease of
+    Disease ->
+      Level;
+
+    _ ->
+      find_infection_level(OtherLevels, Disease, DefaultValue)
+  end.
