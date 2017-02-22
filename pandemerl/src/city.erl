@@ -30,7 +30,7 @@ infection_level(City, Disease) ->
   Level = find_infection_level(Levels, Disease, 0),
   Level.
 
-find_infection_level([], Disease, DefaultValue) -> DefaultValue;
-find_infection_level([{Disease, Level} | OtherLevels ], Disease, DefaultValue) -> Level;
-find_infection_level([{ADisease, Level} | OtherLevels ], Disease, DefaultValue) ->
-      find_infection_level(OtherLevels, Disease, DefaultValue).
+find_infection_level([], _, DefaultValue) -> DefaultValue;
+find_infection_level([{Disease, Level} | _], Disease, _) -> Level;
+find_infection_level([_ | OtherLevels], Disease, DefaultValue) ->
+  find_infection_level(OtherLevels, Disease, DefaultValue).
