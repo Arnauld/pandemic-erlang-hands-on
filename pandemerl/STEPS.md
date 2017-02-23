@@ -70,6 +70,7 @@ div(A,B) -> A / B.
 
 `city_proc.erl` + `city_proc_tests.erl`
 
+* `error_logger`
 * module `?MODULE`
 * MFA
 * process
