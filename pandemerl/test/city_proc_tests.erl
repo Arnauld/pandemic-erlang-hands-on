@@ -32,6 +32,15 @@ should_increase_infection_level_when_infected__test() ->
   city_proc:infect(Pid, blue),
   ?assertEqual(1, city_proc:infection_level(Pid, blue)).
 
+should_outbreak_when_infection_level_reaches_the_threashold__test() ->
+  Pid = city_proc:start(london),
+  city_proc:infect(Pid, blue),
+  city_proc:infect(Pid, blue),
+  city_proc:infect(Pid, blue),
+  ?assertEqual(3, city_proc:infection_level(Pid, blue)),
+  outbreak = city_proc:infect(Pid, blue),
+  ?assertEqual(3, city_proc:infection_level(Pid, blue)).
+
 
 filter_event(Events) ->
   filter_event(Events, []).
