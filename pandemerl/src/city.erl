@@ -26,10 +26,8 @@ name_of(City) ->
   {Name, _Levels} = City,
   Name.
 
-infection_level(City, Disease) ->
-  {_Name, Levels} = City,
-  Level = find_infection_level(Levels, Disease, 0),
-  Level.
+infection_level({_Name, Levels}, Disease) when is_list(Levels) ->
+  find_infection_level(Levels, Disease, 0).
 
 find_infection_level([], _, DefaultValue) -> DefaultValue;
 find_infection_level([{Disease, Level} | _], Disease, _) -> Level;
