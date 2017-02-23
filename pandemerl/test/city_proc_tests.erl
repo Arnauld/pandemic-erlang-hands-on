@@ -23,6 +23,10 @@ should_be_able_to_start_a_city__test() ->
   Events = filter_event(log_collector:get_events()),
   ?assertEqual([{"Name: ~p, blue: ~p", [london, 0]}], Events).
 
+should_not_be_infected_by_default__test() ->
+  Pid = city_proc:start(london),
+  ?assertEqual(0, city_proc:infection_level(Pid, blue)).
+
 
 filter_event(Events) ->
   filter_event(Events, []).
