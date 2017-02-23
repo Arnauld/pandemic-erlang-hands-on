@@ -27,6 +27,11 @@ should_not_be_infected_by_default__test() ->
   Pid = city_proc:start(london),
   ?assertEqual(0, city_proc:infection_level(Pid, blue)).
 
+should_increase_infection_level_when_infected__test() ->
+  Pid = city_proc:start(london),
+  city_proc:infect(Pid, blue),
+  ?assertEqual(1, city_proc:infection_level(Pid, blue)).
+
 
 filter_event(Events) ->
   filter_event(Events, []).

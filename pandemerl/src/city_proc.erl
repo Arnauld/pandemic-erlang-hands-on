@@ -13,7 +13,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start/1, log_state/1, infection_level/2]).
+-export([start/1, log_state/1, infection_level/2, infect/2]).
 -export([loop/1]).
 
 %% ------------------------------------------------------------------
@@ -34,6 +34,13 @@ infection_level(City, Disease) when is_pid(City) ->
       Level
   end.
 
+infect(City, Disease) when is_pid(City) ->
+  City ! {infect, self(), Disease},
+  receive
+    {infect_response, Response} ->
+      Response
+  end.
+
 loop(State) ->
   receive
     log_state ->
@@ -45,5 +52,16 @@ loop(State) ->
     {infection_level, From, Disease} ->
       Level = city:infection_level(State, Disease),
       From ! {infection_level_response, Disease, Level},
-      loop(State)
+      loop(State);
+
+    {infect, From, Disease} ->
+      case city:infect(State, Disease) of
+        outbreak ->
+          From ! {infect_response, outbreak},
+          loop(State);
+
+        {ok, NewState} ->
+          From ! {infect_response, infected},
+          loop(NewState)
+      end
   end.
