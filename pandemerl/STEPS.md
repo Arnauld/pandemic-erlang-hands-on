@@ -75,6 +75,8 @@ div(A,B) -> A / B.
 * MFA
 * process
     * spaw, receive
+    * `self()`
+    
      
 ## Extra
 
