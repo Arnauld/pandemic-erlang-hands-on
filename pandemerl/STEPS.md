@@ -120,3 +120,34 @@ calc() ->
 # 2.Processes and non-blocking way
 
 * register
+* unregister try/after
+* record to the rescue
+
+## Cheat sheet
+
+```erlang
+Pid = spawn(fun() -> ... end),
+register(myproc, Pid).
+unregister(myproc).
+
+
+
+-record(city, {name, 
+               infection_levels = [], 
+               links = []}).
+-record(city, {name :: atom(), 
+               infection_levels = [] :: [{atom(), pos_integer()}], 
+               links = [] :: [atom()]}).
+               
+City = #city{name = london, links = [essen, paris]},
+Name = City#city.name.
+
+#city{name = AName, links = Links} = City,
+london = AName,
+[essen, paris] = Links.
+
+propagate_of(Disease, City = #city{links = Links}) -> 
+  lists:foreach(fun(Linked) -> 
+                  infect(Disease, Linked) 
+                end, Links).
+```
