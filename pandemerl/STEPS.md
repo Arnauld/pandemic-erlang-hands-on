@@ -81,7 +81,6 @@ div(A,B) -> A / B.
 ## Extra
 
 * error_logger
-* register
 * guard
 
 ## Cheat sheet
@@ -117,3 +116,7 @@ calc() ->
       
   end.
 ```
+
+# 2.Processes and non-blocking way
+
+* register

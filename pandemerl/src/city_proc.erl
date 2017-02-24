@@ -13,7 +13,8 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start/1, log_state/1, infection_level/2, infect/2]).
+-export([start/1, start_registered/1]).
+-export([log_state/1, infection_level/2, infect/2]).
 -export([loop/1]).
 
 %% ------------------------------------------------------------------
@@ -24,17 +25,22 @@ start(City) ->
   {ok, State} = city:new(City),
   spawn(?MODULE, loop, [State]).
 
-log_state(City) when is_pid(City) ->
+start_registered(City) ->
+  Pid = start(City),
+  register(City, Pid),
+  Pid.
+
+log_state(City) when is_pid(City) orelse is_atom(City) ->
   City ! log_state.
 
-infection_level(City, Disease) when is_pid(City) ->
+infection_level(City, Disease) when is_pid(City) orelse is_atom(City) ->
   City ! {infection_level, self(), Disease},
   receive
     {infection_level_response, Disease, Level} ->
       Level
   end.
 
-infect(City, Disease) when is_pid(City) ->
+infect(City, Disease) when is_pid(City) orelse is_atom(City) ->
   City ! {infect, self(), Disease},
   receive
     {infect_response, Response} ->
