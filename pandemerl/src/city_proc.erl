@@ -13,7 +13,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start/1, start_registered/1]).
+-export([start/1, start_registered/1, start_registered/2]).
 -export([log_state/1, infection_level/2, infect/2]).
 -export([loop/1]).
 
@@ -22,11 +22,17 @@
 %% ------------------------------------------------------------------
 
 start(City) ->
-  {ok, State} = city:new(City),
+  start(City, []).
+
+start(City, Links) ->
+  {ok, State} = city:new(City, Links),
   spawn(?MODULE, loop, [State]).
 
 start_registered(City) ->
-  Pid = start(City),
+  start_registered(City, []).
+
+start_registered(City, Links) ->
+  Pid = start(City, Links),
   register(City, Pid),
   Pid.
 
@@ -63,7 +69,8 @@ loop(State) ->
     {infect, From, Disease} ->
       case city:infect(State, Disease) of
         outbreak ->
-          From ! {infect_response, outbreak},
+          Links = city:links_of(State),
+          From ! {infect_response, {outbreak, Links}},
           loop(State);
 
         {ok, NewState} ->

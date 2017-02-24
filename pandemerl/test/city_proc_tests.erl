@@ -38,7 +38,7 @@ should_outbreak_when_infection_level_reaches_the_threashold__test() ->
   city_proc:infect(Pid, blue),
   city_proc:infect(Pid, blue),
   ?assertEqual(3, city_proc:infection_level(Pid, blue)),
-  outbreak = city_proc:infect(Pid, blue),
+  {outbreak, _Links} = city_proc:infect(Pid, blue),
   ?assertEqual(3, city_proc:infection_level(Pid, blue)).
 
 

@@ -13,20 +13,27 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([new/1, name_of/1, infection_level/2, infect/2]).
+-export([new/1, new/2, name_of/1, links_of/1, infection_level/2, infect/2]).
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
 %% ------------------------------------------------------------------
 new(City) ->
-  CityState = {City, []},
+  new(City, []).
+
+new(City, Links) ->
+  CityState = {City, [], Links},
   {ok, CityState}.
 
 name_of(City) ->
-  {Name, _Levels} = City,
+  {Name, _Levels, _Links} = City,
   Name.
 
-infection_level({_Name, Levels}, Disease) when is_list(Levels) ->
+links_of(City) ->
+  {_Name, _Levels, Links} = City,
+  Links.
+
+infection_level({_Name, Levels, _Links}, Disease) when is_list(Levels) ->
   find_infection_level(Levels, Disease, 0).
 
 find_infection_level([], _, DefaultValue) -> DefaultValue;
@@ -35,7 +42,7 @@ find_infection_level([_ | OtherLevels], Disease, DefaultValue) ->
   find_infection_level(OtherLevels, Disease, DefaultValue).
 
 infect(City, Disease) ->
-  {Name, Levels} = City,
+  {Name, Levels, Links} = City,
   Level = find_infection_level(Levels, Disease, 0),
   case Level of
     3 ->
@@ -44,7 +51,7 @@ infect(City, Disease) ->
     _ ->
       NewLevel = Level + 1,
       NewLevels = set_infection_level(Levels, Disease, NewLevel),
-      NewCity = {Name, NewLevels},
+      NewCity = {Name, NewLevels, Links},
       {ok, NewCity}
   end.
 

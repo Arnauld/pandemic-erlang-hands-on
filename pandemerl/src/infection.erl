@@ -19,4 +19,10 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 infect(City, Disease) ->
-  city_proc:infect(City, Disease).
+  case city_proc:infect(City, Disease) of
+    {outbreak, Links} ->
+      lists:foreach(fun(LinkedCity) -> infect(LinkedCity, Disease) end, Links);
+
+    _ ->
+      ok
+  end.
