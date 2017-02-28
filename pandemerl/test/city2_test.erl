@@ -15,7 +15,7 @@ should_not_be_infected_by_default__test() ->
   {ok, _Pid} = city2:start(london, []),
   try
     Level = city2:infection_level(london, blue),
-    ?assertEqual({infection_level, blue, 0}, Level)
+    ?assertEqual({infection_level, london, blue, 0}, Level)
   after
     unregister(london)
   end.
@@ -26,13 +26,13 @@ should_increase_infection_level_when_infected__test() ->
     city2:infect(london, blue, self()),
     receive
       Msg ->
-        ?assertEqual({infected, 1}, Msg)
+        ?assertEqual({infected, london, blue, 1}, Msg)
     after 1000 ->
       ?assert(timeout)
     end,
 
     Level = city2:infection_level(london, blue),
-    ?assertEqual({infection_level, blue, 1}, Level)
+    ?assertEqual({infection_level, london, blue, 1}, Level)
   after
     unregister(london)
   end.
@@ -45,7 +45,7 @@ should_outbreak_when_infection_level_reaches_the_threashold__test() ->
     city2:infect(london, blue, self()),
     receive
       Msg1 ->
-        ?assertEqual({infected, 3}, Msg1)
+        ?assertEqual({infected, london, blue, 3}, Msg1)
     after 1000 ->
       ?assert(timeout)
     end,
@@ -53,7 +53,7 @@ should_outbreak_when_infection_level_reaches_the_threashold__test() ->
     city2:infect(london, blue, self()),
     receive
       Msg2 ->
-        ?assertEqual({outbreak, [paris, essen]}, Msg2)
+        ?assertEqual({outbreak, london, blue, [paris, essen]}, Msg2)
     after 1000 ->
       ?assert(timeout)
     end
