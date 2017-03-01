@@ -12,7 +12,9 @@
 -behaviour(gen_event).
 
 %% API
--export([start_link/0, listen_error_logger/0, get_events/0, waits_for_event/0]).
+-export([start_link/0,
+  listen_error_logger/0, stop_listening_error_logger/0,
+  get_events/0, waits_for_event/0]).
 
 %% gen_event callbacks
 -export([init/1,
@@ -33,6 +35,9 @@ start_link() ->
 
 listen_error_logger() ->
   error_logger:add_report_handler(?MODULE).
+
+stop_listening_error_logger() ->
+  error_logger:delete_report_handler(?MODULE).
 
 get_events() ->
   log_collector_srv:get_events().

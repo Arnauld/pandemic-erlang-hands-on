@@ -15,7 +15,7 @@
 %% ------------------------------------------------------------------
 
 -export([start/2]).
--export([infect/2, infect/3, infection_level/2]).
+-export([infect/2, infect/3, infection_level/2, infection_level/3]).
 -export([loop/2]).
 
 %% ------------------------------------------------------------------
@@ -40,6 +40,9 @@ infection_level(City, Disease) ->
       Msg
   end.
 
+infection_level(City, Disease, Level) ->
+  City ! {infection_level, self(), Disease, Level}.
+
 loop(City, State) ->
   receive
     {infect, From, Disease} ->
@@ -57,6 +60,12 @@ loop(City, State) ->
           reply(From, {infected, City, Disease, NewLevel}),
           loop(City, NewState)
       end;
+
+    {infection_level, From, Disease, NewLevel} ->
+      Levels = State#state.infection_levels,
+      NewLevels = [{Disease, NewLevel} | proplists:delete(Disease, Levels)],
+      NewState = State#state{infection_levels = NewLevels},
+      loop(City, NewState);
 
     {infection_level, From, Disease} ->
       Levels = State#state.infection_levels,
